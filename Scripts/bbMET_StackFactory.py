@@ -28,6 +28,7 @@ parser.add_option("-m", "--mu", action="store_true", dest="plotMuRegs")
 parser.add_option("-e", "--ele", action="store_true", dest="plotEleRegs")
 parser.add_option("-p", "--pho", action="store_true", dest="plotPhoRegs")
 parser.add_option("-q", "--qcd", action="store_true", dest="plotQCDRegs")
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
 
 (options, args) = parser.parse_args()
 
@@ -56,7 +57,11 @@ if options.plotQCDRegs==None:
 else:
     makeQCDCRplots = options.plotQCDRegs
 
-    
+if options.verbose==None:
+    verbose = False
+else:
+    verbose = options.verbose
+        
 if options.datasetname.upper()=="SE":
     dtset="SE"
 elif options.datasetname.upper()=="SP":
@@ -355,7 +360,7 @@ TH1F *h_total;
 //cout << to_string(nfiles) << endl;
 
 for(int i =0; i<84; i++){
-    cout << "Reading file #" << to_string(i+1) << ": " << filenameString[i] << endl;
+    if(VERBOSE) cout << "Reading file #" << to_string(i+1) << ": " << filenameString[i] << endl;
     fIn = new TFile(filenameString[i],"READ");
 
     //if(VARIABLEBINS){
@@ -474,6 +479,16 @@ if (1) {
  }else{ */
  
  
+float zj_i = ZJets->Integral();
+float dyj_i = DYJets->Integral();
+float wj_i = WJets->Integral();
+float tt_i = TT->Integral();
+float st_i = STop->Integral();
+float gj_i = GJets->Integral();
+float db_i = DIBOSON->Integral();
+float qc_i = QCD->Integral();
+float mcsum = zj_i+dyj_i+wj_i+tt_i+st_i+gj_i+db_i+qc_i;
+ 
 legend = new TLegend(0.60, 0.70, 0.94,0.94,NULL,"brNDC"); 
 legend->SetTextSize(0.020);
 
@@ -486,7 +501,7 @@ legend->SetTextSize(0.020);
  legend->SetTextFont(42);
  legend->SetNColumns(2);
  
- if (QCDSF==1) {
+/* if (QCDSF==1) {
     legend->AddEntry(h_data,"Data","PEL");
  } 
  
@@ -495,14 +510,22 @@ legend->SetTextSize(0.020);
      legend->AddEntry(DYJets,DYLegend,"f");
  } else {
      legend->AddEntry(ZJets,ZLegend,"f");
- }
-
- legend->AddEntry(WJets,WLegend,"f");
- legend->AddEntry(TT,TTLegend,"f");
- legend->AddEntry(STop,STLegend,"f");
- legend->AddEntry(GJets,GLegend,"f");
- legend->AddEntry(DIBOSON,VVLegend,"f");
- legend->AddEntry(QCD,QCDLegend,"f");
+ }      */
+ 
+ cout << "DY:" << dyj_i << endl;
+ cout << "Total:" << mcsum << endl;
+ 
+ float legendthres = 0.008;
+ 
+ if (!NORATIOPLOT) legend->AddEntry(h_data,"Data","PEL");
+ if (dyj_i/mcsum > legendthres) legend->AddEntry(DYJets,DYLegend,"f");
+ if (zj_i/mcsum > legendthres) legend->AddEntry(ZJets,ZLegend,"f");
+ if (wj_i/mcsum > legendthres) legend->AddEntry(WJets,WLegend,"f");
+ if (tt_i/mcsum > legendthres) legend->AddEntry(TT,TTLegend,"f");
+ if (st_i/mcsum > 0.) legend->AddEntry(STop,STLegend,"f");
+ if (gj_i/mcsum > 0.) legend->AddEntry(GJets,GLegend,"f");
+ if (db_i/mcsum > 0.) legend->AddEntry(DIBOSON,VVLegend,"f");
+ if (qc_i/mcsum > 0.) legend->AddEntry(QCD,QCDLegend,"f");
 
 
 //============== CANVAS DECLARATION ===================
@@ -547,14 +570,6 @@ QCD->SetFillColor(kGray+1);
 QCD->SetLineWidth(0);
 
 //hadd all the histos acc to their contributions
-
-float zj_i = ZJets->Integral();
-float dyj_i = DYJets->Integral();
-float wj_i = WJets->Integral();
-float tt_i = TT->Integral();
-float st_i = STop->Integral();
-float gj_i = GJets->Integral();
-float qc_i = QCD->Integral();
 
 //int order_ = 0;
 //if ( zj_i > tt_i && zj_i > st_i && zj_i > wj_i && zj_i > dyj_i ) order_ = 0;
@@ -1380,6 +1395,7 @@ def makeplot(inputs):
         line = line.replace("ISLOG",inputs[6])
         
         line = line.replace("QCDSF",str(QCDSF))
+        line = line.replace("VERBOSE",str(int(verbose)))
         
         HistName=inputs[1]
         if 'h_reg_' in HistName:
@@ -1464,6 +1480,10 @@ for dirname in dirnames:
 #    else:
 #        regions=[]
 #        PUreg=[]
+    
+    makeplot([dirname+"CRSum",'h_CRSum_','','0.','10.','1','1'])
+    if makeMuCRplots: makeplot([dirname+"CRSumMu",'h_CRSumMu_','','0.','6.','1','1'])
+    if makeEleCRplots: makeplot([dirname+"CRSumEle",'h_CRSumEle_','','0.','4.','1','1'])
     
     for dt in PUreg:
         makeplot([dirname+dt+"PuReweightPV",'h_'+dt+'PuReweightPV_','nPV after PU reweighting','0.','50.','1','0'])
