@@ -38,7 +38,7 @@ inCRfiles=[fold+"/"+i for i in os.listdir(fold) if i.endswith('hadrecoil.root')]
 inSRfiles=[fold+"/"+i for i in ['met_sr1.root','met_sr2.root']]
 inSystfiles=[fold_syst+"/"+i for i in os.listdir(fold_syst) if "syst" in i]
 
-bins=[200,250,300,400,500,700,1000,2000]
+bins=[200,300,500,2000]
 
 def getCRcat(infile):
 
@@ -142,13 +142,21 @@ for infile in sorted(inCRfiles+inSRfiles+inSystfiles):
             shortname += "_"+flnamesplit[2]+"_"+flnamesplit[4]
 
         h_temp=setHistStyle(h_temp2,bins,shortname)
-        if CR=="SR": h_temp.Scale(20)
+        #if CR=="SR": h_temp.Scale(20)
         sel=h_temp.Integral()
         fdict[CR+"_"+category].cd()
         h_temp.Write()
+        print "this is old name",newname
+        if CR=="SR" and (newname.split('_')[-1]=='QCD' or newname.split('_')[-1]=='DIBOSON' or newname.split('_')[-1]=='Top' or newname.split('_')[-1]=='STop' or newname.split('_')[-1]=='WJets' or newname.split('_')[-1]=='DYJets' or newname.split('_')[-1]=='ZJets' or newname.split('_')[-1]=='GJets'):
+            newname=newname.split('_')[-1]
+            print "this is new name",newname
+        if CR=="SR" and newname.split('_')[-1]=='obs':
+            newname='data_obs'
+            print "this is new name",newname
 
+        #print "set this name",newname
         h_temp=setHistStyle(h_temp2,bins,newname)
-        if CR=="SR": h_temp.Scale(20)
+
         f.cd()
         h_temp.Write()
 
@@ -165,6 +173,14 @@ for infile in sorted(inCRfiles+inSRfiles+inSystfiles):
 
 #
 ##Signal
+
+CrossSec={'MH4_150':0.3217,'MH4_200':0.2453,'MH4_250':0.1758,'MH4_300':.1224,'MH4_350':0.08198,'MH4_400':0.0423,'MH4_500':0.005887}
+def getCross(file):
+    ma=file.split('/')[-1].strip('.root').split('_')[-4]
+    XSec=CrossSec['MH4_'+str(ma)]
+    return XSec,ma
+
+
 monoHFiles=[path_sig+"/"+i for i in os.listdir(path_sig+"/") if i.endswith('.root')]
 
 HDMaFiles=[path_sig_2HDM+"/"+i for i in os.listdir(path_sig_2HDM+"/") if i.endswith('.root')]
@@ -236,12 +252,12 @@ for inFile in HDMaFiles:
     MH2='600'
 
     MH4 = inFile.split('/')[-1].strip('.root').split('_')[-4]
+    if 'MH4_100' in inFile.split('/')[-1]: continue
 
-    #print "filesplit",inFile.split('/')[-1].strip('.root').split('_')[-4]
+    xsec,MH4=getCross(inFile)
+    xsec=float (xsec)
 
 
-    #print "this file",inFile.split('/')[-1]
-    #print "these are mass points", MH4
     print ("Total = "+str(tot))
 
 
@@ -258,7 +274,7 @@ for inFile in HDMaFiles:
 
     h_temp=setHistStyle(h_temp2,bins,newname)
     sel=h_temp.Integral()
-    h_temp.Scale(lumi/tot)
+    h_temp.Scale(lumi*xsec/tot)
 
     fdict['signal_'+category].cd()
     h_temp.Write()
@@ -268,7 +284,7 @@ for inFile in HDMaFiles:
 
     if samp.startswith("2HDM"):
         h_temp=setHistStyle(h_temp2,bins,"MH3_600_MH4_"+MH4+"_MH2_600")
-        h_temp.Scale(lumi/tot)
+        h_temp.Scale(lumi*xsec/tot)
 
         fdict['SR_'+category].cd()
         h_temp.Write()
@@ -290,7 +306,7 @@ for inFile in HDMaFiles:
             pseudofile=fold+"/"+"reg_"+reg+"_hadrecoil.root"
             CR,category=getCRcat(pseudofile)
             h_temp=setHistStyle(h_temp2,bins,"MH3_600_MH4_"+MH4+"_MH2_600")
-            h_temp.Scale(lumi/tot)
+            h_temp.Scale(lumi*xsec/tot)
             if h_temp.Integral()==0.:
                 for ibin in range(h_temp.GetSize()-1):
                     h_temp.SetBinContent(ibin,6e-4)

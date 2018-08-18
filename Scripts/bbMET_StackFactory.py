@@ -1466,16 +1466,20 @@ for dirname in dirnames:
 #    if makeMuCRplots and makeEleCRplots:
 #        regions=['2e1b','2mu1b','2e2b','2mu2b','1e1b','1mu1b','1e2b','1mu2b','1mu1e1b','1mu1e2b']
     if makeMuCRplots:
-        regions+=['2mu1b','2mu2b','1mu1b','1mu2b','1mu1e1b','1mu1e2b']
+        #regions+=['2mu1b','2mu2b','1mu1b','1mu2b','1mu1e1b','1mu1e2b']
+        regions+=['2mu2b','1mu2b','1mu1e2b']
         PUreg+=['mu_']
     if makeEleCRplots:
-        regions+=['2e1b','2e2b','1e1b','1e2b']
+        #regions+=['2e1b','2e2b','1e1b','1e2b']
+        regions+=['2e2b','1e2b']
         PUreg+=['ele_']
     if makePhoCRplots:
-        regions+=['1gamma1b','1gamma2b']
+        #regions+=['1gamma1b','1gamma2b']
+        regions+=['1gamma2b']
         PUreg+=['pho_']
     if makeQCDCRplots:
-        regions+=['QCD1b','QCD2b']
+        #regions+=['QCD1b','QCD2b']
+        regions+=['QCD2b']
         PUreg+=[]
 #    else:
 #        regions=[]
@@ -1485,16 +1489,16 @@ for dirname in dirnames:
     if makeMuCRplots: makeplot([dirname+"CRSumMu",'h_CRSumMu_','','0.','6.','1','1'])
     if makeEleCRplots: makeplot([dirname+"CRSumEle",'h_CRSumEle_','','0.','4.','1','1'])
     
-    for dt in PUreg:
-        makeplot([dirname+dt+"PuReweightPV",'h_'+dt+'PuReweightPV_','nPV after PU reweighting','0.','50.','1','0'])
-        makeplot([dirname+dt+"noPuReweightPV",'h_'+dt+'noPuReweightPV_','nPV before PU reweighting','0.','50.','1','0'])
+    #for dt in PUreg:
+        #makeplot([dirname+dt+"PuReweightPV",'h_'+dt+'PuReweightPV_','nPV after PU reweighting','0.','50.','1','0'])
+        #makeplot([dirname+dt+"noPuReweightPV",'h_'+dt+'noPuReweightPV_','nPV before PU reweighting','0.','50.','1','0'])
 #        makeplot([dirname+dt+"PuReweightnPVert",'h_'+dt+'PuReweightnPVert_','nPV after PU reweighting (nPVert): '+dt,'0.','100.','100','0'])
 #        makeplot([dirname+dt+"noPuReweightnPVert",'h_'+dt+'noPuReweightnPVert_','nPV before PU reweighting (nPVert): '+dt,'0.','100.','100','0'])
 
 # Cutflow plots:
     if makeSRplots:
-        makeplot([dirname+"cutflow",'h_cutflow_','Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
-        makeplot([dirname+"cutflow_SR1",'h_cutflow_SR1_','SR1 Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
+        #makeplot([dirname+"cutflow",'h_cutflow_','Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
+        #makeplot([dirname+"cutflow_SR1",'h_cutflow_SR1_','SR1 Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
         makeplot([dirname+"cutflow_SR2",'h_cutflow_SR2_','SR2 Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
     
     for reg in regions:
@@ -1502,29 +1506,29 @@ for dirname in dirnames:
         
 #Linear plots:
     if makeSRplots:
-        makeplot([dirname+"jet1_eta_sr1",'h_jet1_eta_sr1_','jet 1 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet2_eta_sr1",'h_jet2_eta_sr1_','jet 2 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_eta_sr1",'h_jet1_eta_sr1_','jet 1 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_eta_sr1",'h_jet2_eta_sr1_','jet 2 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
 
         makeplot([dirname+"jet1_eta_sr2",'h_jet1_eta_sr2_','jet 1 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
         makeplot([dirname+"jet2_eta_sr2",'h_jet2_eta_sr2_','jet 2 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
         makeplot([dirname+"jet3_eta_sr2",'h_jet3_eta_sr2_','jet 3 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
 
-        makeplot([dirname+"jet1_csv_sr1",'h_jet1_csv_sr1_','jet 1 csv','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet2_csv_sr1",'h_jet2_csv_sr1_','jet 2 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_csv_sr1",'h_jet1_csv_sr1_','jet 1 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_csv_sr1",'h_jet2_csv_sr1_','jet 2 csv','0.','1.','1','0','0',srblindfactor,srnodata])
         
-        makeplot([dirname+"jet1_deepcsv_sr1",'h_jet1_deepcsv_sr1_','jet 1 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet2_deepcsv_sr1",'h_jet2_deepcsv_sr1_','jet 2 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_deepcsv_sr1",'h_jet1_deepcsv_sr1_','jet 1 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_deepcsv_sr1",'h_jet2_deepcsv_sr1_','jet 2 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
 
         #makeplot([dirname+"presel_jet1_csv_sr1",'h_presel_jet1_csv_sr1_','jet 1 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
         #makeplot([dirname+"presel_jet2_csv_sr1",'h_presel_jet2_csv_sr1_','jet 2 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
 
-        makeplot([dirname+"jet1_csv_sr2",'h_jet1_csv_sr2_','jet 1 csv','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet2_csv_sr2",'h_jet2_csv_sr2_','jet 2 csv','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet3_csv_sr2",'h_jet3_csv_sr2_','jet 3 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_csv_sr2",'h_jet1_csv_sr2_','jet 1 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_csv_sr2",'h_jet2_csv_sr2_','jet 2 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet3_csv_sr2",'h_jet3_csv_sr2_','jet 3 csv','0.','1.','1','0','0',srblindfactor,srnodata])
         
-        makeplot([dirname+"jet1_deepcsv_sr2",'h_jet1_deepcsv_sr2_','jet 1 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet2_deepcsv_sr2",'h_jet2_deepcsv_sr2_','jet 2 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet3_deepcsv_sr2",'h_jet3_deepcsv_sr2_','jet 3 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_deepcsv_sr2",'h_jet1_deepcsv_sr2_','jet 1 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_deepcsv_sr2",'h_jet2_deepcsv_sr2_','jet 2 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet3_deepcsv_sr2",'h_jet3_deepcsv_sr2_','jet 3 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
 
         #makeplot([dirname+"presel_jet1_csv_sr2",'h_presel_jet1_csv_sr2_','jet 1 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
         #makeplot([dirname+"presel_jet2_csv_sr2",'h_presel_jet2_csv_sr2_','jet 2 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
@@ -1535,14 +1539,14 @@ for dirname in dirnames:
         #makeplot([dirname+"presel_jet1_nhf_sr1",'h_presel_jet1_nhf_sr1_','jet 1 NHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
         #makeplot([dirname+"presel_jet1_nhf_sr2",'h_presel_jet1_nhf_sr2_','jet 1 NHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
 
-        makeplot([dirname+"jet1_chf_sr1",'h_jet1_chf_sr1_','jet 1 CHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet1_chf_sr2",'h_jet1_chf_sr2_','jet 1 CHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet1_nhf_sr1",'h_jet1_nhf_sr1_','jet 1 NHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet1_nhf_sr2",'h_jet1_nhf_sr2_','jet 1 NHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_chf_sr1",'h_jet1_chf_sr1_','jet 1 CHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_chf_sr2",'h_jet1_chf_sr2_','jet 1 CHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_nhf_sr1",'h_jet1_nhf_sr1_','jet 1 NHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_nhf_sr2",'h_jet1_nhf_sr2_','jet 1 NHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
 
     ##for CRs
     for reg in regions:
-        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_Zmass",'h_reg_'+reg+'_Zmass_','Z candidate mass (GeV)','70.','110.',reg[-2],'0'])          
+        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_Zmass",'h_reg_'+reg+'_Zmass_','Z candidate mass (GeV)','70.','110.','6','0'])          
         if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_Wmass",'h_reg_'+reg+'_Wmass_','W candidate m_{T} (GeV)','40.','170.','1','0'])
         makeplot([dirname+"reg_"+reg+"_jet1_eta",'h_reg_'+reg+'_jet1_eta_','Lead Jet #eta','-3.5','3.5','1','0'])
         makeplot([dirname+"reg_"+reg+"_jet2_eta",'h_reg_'+reg+'_jet2_eta_','Second Jet #eta','-3.5','3.5','1','0'])
@@ -1556,25 +1560,25 @@ for dirname in dirnames:
     
 ###For SR
     if makeSRplots:
-        makeplot([dirname+"jet1_pT_sr1",'h_jet1_pT_sr1_','jet 1 p_{T} (GeV)','0.','800.','1','1','0',srblindfactor,srnodata])
-        makeplot([dirname+"jet2_pT_sr1",'h_jet2_pT_sr1_','jet 2 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_pT_sr1",'h_jet1_pT_sr1_','jet 1 p_{T} (GeV)','0.','800.','1','1','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_pT_sr1",'h_jet2_pT_sr1_','jet 2 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
         
         
         makeplot([dirname+"jet1_pT_sr2",'h_jet1_pT_sr2_','jet 1 p_{T} (GeV)','0.','800.','1','1','0',srblindfactor,srnodata])
         makeplot([dirname+"jet2_pT_sr2",'h_jet2_pT_sr2_','jet 2 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
         makeplot([dirname+"jet3_pT_sr2",'h_jet3_pT_sr2_','jet 3 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
         
-        makeplot([dirname+"min_dPhi_sr1",'h_min_dPhi_sr1_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
+        #makeplot([dirname+"min_dPhi_sr1",'h_min_dPhi_sr1_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
         makeplot([dirname+"min_dPhi_sr2",'h_min_dPhi_sr2_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
         
-        makeplot([dirname+"met_sr1",'h_met_sr1_','Missing Transverse Energy (GeV)','200.','1000','2','1','0',srblindfactor,srnodata])
+        #makeplot([dirname+"met_sr1",'h_met_sr1_','Missing Transverse Energy (GeV)','200.','1000','2','1','0',srblindfactor,srnodata])
         makeplot([dirname+"met_sr2",'h_met_sr2_','Missing Transverse Energy (GeV)','200.','1000','2','1','0',srblindfactor,srnodata])
     
     # Region based
     for reg in regions:
-        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.',reg[-2],'1'])
-        if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_WpT",'h_reg_'+reg+'_WpT_','W candidate p_{T} (GeV)','0.','800.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_hadrecoil",'h_reg_'+reg+'_hadrecoil_','Hadronic Recoil (GeV)','200.','1000.','2','1'])
+        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.','10','1'])
+        if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_WpT",'h_reg_'+reg+'_WpT_','W candidate p_{T} (GeV)','0.','800.','2','1'])
+        makeplot([dirname+"reg_"+reg+"_hadrecoil",'h_reg_'+reg+'_hadrecoil_','Hadronic Recoil (GeV)','200.','1000.','5','1'])
         
         makeplot([dirname+"reg_"+reg+"_jet1_NHadEF",'h_reg_'+reg+'_jet1_NHadEF_','Lead jet neutral hadronic fraction','0.','1.','1','1'])
         makeplot([dirname+"reg_"+reg+"_jet1_CHadEF",'h_reg_'+reg+'_jet1_CHadEF_','Lead jet charged hadronic fraction','0.','1.','1','1'])
@@ -1584,9 +1588,9 @@ for dirname in dirnames:
         makeplot([dirname+"reg_"+reg+"_jet1_MuoEF",'h_reg_'+reg+'_jet1_MuoEF_','Lead jet Muon fraction','0.','1.','1','1'])
        
         if not 'QCD' in reg:
-            makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','0.','400.','1','1'])
+            makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','0.','400.','4','1'])
         else:
-            makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','200.','800.','1','1'])
+            makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','200.','800.','10','1'])
         makeplot([dirname+"reg_"+reg+"_njet",'h_reg_'+reg+'_njet_','Number of Jets','-1','5','1','1'])
        
         if reg[:2]=='1e':
@@ -1608,16 +1612,16 @@ for dirname in dirnames:
 #            makeplot([dirname+"reg_"+reg+"_nUncleanEle",'h_reg_'+reg+'_nUncleanEle_','Number of Eles (before cleaning)','-1','6','7','1'])
         makeplot([dirname+"reg_"+reg+"_nmu",'h_reg_'+reg+'_nmu_','Number of Muons','-1','5','1','1'])
 #            makeplot([dirname+"reg_"+reg+"_nUncleanMu",'h_reg_'+reg+'_nUncleanMu_','Number of Muons (before cleaning)','-1','6','7','1'])
-        makeplot([dirname+"reg_"+reg+"_lep1_pT",'h_reg_'+reg+'_lep1_pT_','Lead Lepton p_{T} (GeV)','0.','500.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_lep2_pT",'h_reg_'+reg+'_lep2_pT_','Second Lepton p_{T} (GeV)','0.','250.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_lep1_pT",'h_reg_'+reg+'_lep1_pT_','Lead Lepton p_{T} (GeV)','0.','500.','8','1'])
+        makeplot([dirname+"reg_"+reg+"_lep2_pT",'h_reg_'+reg+'_lep2_pT_','Second Lepton p_{T} (GeV)','0.','250.','8','1'])
         if reg.startswith('1mu1e'): makeplot([dirname+"reg_"+reg+"_e_pT",'h_reg_'+reg+'_e_pT_','Electron p_{T} (GeV)','0.','500.','1','1'])         #Top
         if reg.startswith('1mu1e'): makeplot([dirname+"reg_"+reg+"_mu_pT",'h_reg_'+reg+'_mu_pT_','Muon p_{T} (GeV)','0.','500.','1','1'])           #Top
         makeplot([dirname+"reg_"+reg+"_pho_pT",'h_reg_'+reg+'_pho_pT_','Photon p_{T} (GeV)','0.','500.','1','1'])
         if reg[1]=='m': makeplot([dirname+"reg_"+reg+"_lep1_iso",'h_reg_'+reg+'_lep1_iso_','Lead Lepton isolation','0.','800.','1','1'])
         if reg[1]=='m': makeplot([dirname+"reg_"+reg+"_lep2_iso",'h_reg_'+reg+'_lep2_iso_','Second Lepton isolation','0.','800.','1','1'])
         if reg.startswith('1mu1e'): makeplot([dirname+"reg_"+reg+"_mu_iso",'h_reg_'+reg+'_mu_iso_','Muon isolation','0.','800.','1','1'])            #Top
-        makeplot([dirname+"reg_"+reg+"_jet1_pT",'h_reg_'+reg+'_jet1_pT_','Lead Jet p_{T} (GeV)','0.','800.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_jet2_pT",'h_reg_'+reg+'_jet2_pT_','Second Jet p_{T} (GeV)','0.','400.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_jet1_pT",'h_reg_'+reg+'_jet1_pT_','Lead Jet p_{T} (GeV)','0.','800.','4','1'])
+        makeplot([dirname+"reg_"+reg+"_jet2_pT",'h_reg_'+reg+'_jet2_pT_','Second Jet p_{T} (GeV)','0.','400.','4','1'])
 #            makeplot([dirname+"reg_"+reg+"_lep1_dR_tau",'h_reg_'+reg+'_lep1_dR_tau_','dR b/w tau and lead lepton','0.','6.','120','1'])
 #            makeplot([dirname+"reg_"+reg+"_lep2_dR_tau",'h_reg_'+reg+'_lep2_dR_tau_','dR b/w tau and second lepton','0.','6.','120','1'])
 #            makeplot([dirname+"reg_"+reg+"_min_lep_dR_tau",'h_reg_'+reg+'_min_lep_dR_tau_','minimum dR b/w tau and leptons','0.','6.','120','1'])
