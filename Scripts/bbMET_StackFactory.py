@@ -89,7 +89,7 @@ time_t now = time(0);
 tm *ltm = localtime(&now);
 TString dirpathname;
 
- TString DirPreName = "/afs/cern.ch/work/d/dekumar/public/monoH/bbDMplots/CMSSW_8_0_26_patch1/src/limitplot/bbMET/bbMETplot/Scripts/test/";
+ TString DirPreName = "/afs/cern.ch/work/d/dekumar/public/monoH/bbDMplots/CMSSW_8_0_26_patch1/src/WCRsplitter_newZCR_noMass/bbMETplot/Scripts/test/";
  dirpathname = "'''+datestr+'''"; //.Form("%d%1.2d%d",ltm->tm_mday,1 + ltm->tm_mon,1900 + ltm->tm_year);
  
  system("mkdir -p  " + DirPreName+dirpathname +"/bbMETROOT");
@@ -157,7 +157,7 @@ TH1F*  STop;
 TH1F*  GJets;
 TH1F*  QCD;
 //TH1F*  data_obs;
-TString filenamepath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/bkg/"); 
+TString filenamepath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_ZCR_withoutMasscut_v2/bkg_data/"); 
 
 // Diboson WW WZ ZZ 0 1 2
 filenameString.push_back(filenamepath + "Output_crab_WW_TuneCUETP8M1_13TeV-pythia8_MC25ns_LegacyMC_20170328.root");
@@ -226,7 +226,7 @@ filenameString.push_back(filenamepath + "Output_crab_QCD_HT2000toInf_TuneCUETP8M
 //
 
 // not used so far
-TString filenamesigpath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/signal/"); 
+TString filenamesigpath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_ZCR_withoutMasscut_v2/signal/"); 
 //bbMET Signal Sample 46 - 83
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-400.root");
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-350.root");
@@ -269,7 +269,7 @@ filenameString.push_back(filenamesigpath + "Output_pseudo_NLO_Mchi-100_Mphi-350.
 
 //
 
-TString filenamedatapath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/data/");
+TString filenamedatapath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_ZCR_withoutMasscut_v2/bkg_data/");
 //Data File 84
 filenameString.push_back(filenamedatapath + "data_combined_'''+dtset+'''.root");
 
@@ -875,7 +875,7 @@ TH1F *h_MC_all = new TH1F(*((TH1F *)(hs->GetStack()->Last())));  // To get all M
 
 //TString latexCMSname= "CMS #it{#bf{Preliminary}}";//"CMS";// #it{#bf{Preliminary}}";
 TString latexCMSname= "";
-//TString latexPreCMSname= "#bf{CMS} #it{Preliminary}";
+TString latexPreCMSname= "#bf{CMS} #it{Preliminary}";
 
 TString MC_count;
 TString data_count;
@@ -898,7 +898,7 @@ if (QCDSF==1) {
 }
 
 //TString latexPreCMSname="#bf{CMS} #it{Preliminary}: "+MC_count+data_count+hasQSF;
-TString latexPreCMSname="#bf{CMS} #it{Preliminary}: "+MC_count+data_count;
+//TString latexPreCMSname="#bf{CMS} #it{Preliminary}: "+MC_count+data_count;
 
 TString latexnamemiddle;
 latexnamemiddle.Form("%1.1f fb^{-1}",luminosity); 
@@ -1403,7 +1403,7 @@ def makeplot(inputs):
         elif '_sr1' in HistName:
             histolabel="SR1"
         elif '_sr2' in HistName:
-            histolabel="SR2"
+            histolabel="monoHbb resolved"
         else:
             histolabel=""
             
@@ -1466,16 +1466,16 @@ for dirname in dirnames:
 #    if makeMuCRplots and makeEleCRplots:
 #        regions=['2e1b','2mu1b','2e2b','2mu2b','1e1b','1mu1b','1e2b','1mu2b','1mu1e1b','1mu1e2b']
     if makeMuCRplots:
-        regions+=['2mu1b','2mu2b','1mu1b','1mu2b','1mu1e1b','1mu1e2b']
+        regions+=['2mu2b','1mu2bT','1mu2bW','1mu2bW_noMassCut','1mu2bW_nobtag','1mu2bW_noMassAndbtag']
         PUreg+=['mu_']
     if makeEleCRplots:
-        regions+=['2e1b','2e2b','1e1b','1e2b']
+        regions+=['2e2b','1e2bT','1e2bW','1e2bW_noMassCut','1e2bW_nobtag','1e2bW_noMassAndbtag']
         PUreg+=['ele_']
     if makePhoCRplots:
-        regions+=['1gamma1b','1gamma2b']
+        regions+=['1gamma2b']
         PUreg+=['pho_']
     if makeQCDCRplots:
-        regions+=['QCD1b','QCD2b']
+        regions+=['QCD2b']
         PUreg+=[]
 #    else:
 #        regions=[]
@@ -1502,6 +1502,7 @@ for dirname in dirnames:
         
 #Linear plots:
     if makeSRplots:
+        makeplot([dirname+"bb_Mass_sr2",'h_bb_Mass_sr2_','M(bb)','0.','250.','1','0','0',srblindfactor,srnodata])
         makeplot([dirname+"jet1_eta_sr1",'h_jet1_eta_sr1_','jet 1 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
         makeplot([dirname+"jet2_eta_sr1",'h_jet2_eta_sr1_','jet 2 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
 
@@ -1542,7 +1543,8 @@ for dirname in dirnames:
 
     ##for CRs
     for reg in regions:
-        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_Zmass",'h_reg_'+reg+'_Zmass_','Z candidate mass (GeV)','70.','110.',reg[-2],'0'])          
+	if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_Zmass",'h_reg_'+reg+'_Zmass_','Z candidate mass (GeV)','70.','110.','1','0'])
+        #if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_Zmass",'h_reg_'+reg+'_Zmass_','Z candidate mass (GeV)','70.','110.',reg[-2],'0'])          
         if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_Wmass",'h_reg_'+reg+'_Wmass_','W candidate m_{T} (GeV)','40.','170.','1','0'])
         makeplot([dirname+"reg_"+reg+"_jet1_eta",'h_reg_'+reg+'_jet1_eta_','Lead Jet #eta','-3.5','3.5','1','0'])
         makeplot([dirname+"reg_"+reg+"_jet2_eta",'h_reg_'+reg+'_jet2_eta_','Second Jet #eta','-3.5','3.5','1','0'])
@@ -1567,14 +1569,15 @@ for dirname in dirnames:
         makeplot([dirname+"min_dPhi_sr1",'h_min_dPhi_sr1_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
         makeplot([dirname+"min_dPhi_sr2",'h_min_dPhi_sr2_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
         
-        makeplot([dirname+"met_sr1",'h_met_sr1_','Missing Transverse Energy (GeV)','200.','1000','2','1','0',srblindfactor,srnodata])
-        makeplot([dirname+"met_sr2",'h_met_sr2_','Missing Transverse Energy (GeV)','200.','1000','2','1','0',srblindfactor,srnodata])
+        makeplot([dirname+"met_sr1",'h_met_sr1_','Missing Transverse Energy (GeV)','200.','1000','1','1','0',srblindfactor,srnodata])
+        makeplot([dirname+"met_sr2",'h_met_sr2_','Missing Transverse Energy (GeV)','200.','1000','1','1','0',srblindfactor,srnodata])
     
     # Region based
     for reg in regions:
-        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.',reg[-2],'1'])
+	if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.','1','1'])
+        #if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.',reg[-2],'1'])
         if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_WpT",'h_reg_'+reg+'_WpT_','W candidate p_{T} (GeV)','0.','800.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_hadrecoil",'h_reg_'+reg+'_hadrecoil_','Hadronic Recoil (GeV)','200.','1000.','2','1'])
+        makeplot([dirname+"reg_"+reg+"_hadrecoil",'h_reg_'+reg+'_hadrecoil_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
         
         makeplot([dirname+"reg_"+reg+"_jet1_NHadEF",'h_reg_'+reg+'_jet1_NHadEF_','Lead jet neutral hadronic fraction','0.','1.','1','1'])
         makeplot([dirname+"reg_"+reg+"_jet1_CHadEF",'h_reg_'+reg+'_jet1_CHadEF_','Lead jet charged hadronic fraction','0.','1.','1','1'])
@@ -1587,7 +1590,7 @@ for dirname in dirnames:
             makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','0.','400.','1','1'])
         else:
             makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','200.','800.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_njet",'h_reg_'+reg+'_njet_','Number of Jets','-1','5','1','1'])
+        makeplot([dirname+"reg_"+reg+"_njet",'h_reg_'+reg+'_njet_','Number of Jets','-1','10','1','1'])
        
         if reg[:2]=='1e':
             makeplot([dirname+"reg_"+reg+"_njet_n_minus_1",'h_reg_'+reg+'_njet_n_minus_1_','Number of Jets (n-1 cuts plot)','-1','12','1','1'])
@@ -1599,7 +1602,7 @@ for dirname in dirnames:
         makeplot([dirname+"reg_"+reg+"_min_dPhi_jet_MET",'h_reg_'+reg+'_min_dPhi_jet_MET_','min d #phi between jets and real MET','0.','6.','1','1'])
        
         makeplot([dirname+"reg_"+reg+"_min_dPhi_jet_Recoil_n_minus_1",'h_reg_'+reg+'_min_dPhi_jet_Recoil_n_minus_1_','min d #phi between jets and recoil before d#phi cut','0.','6.','1','1'])
-       
+	makeplot([dirname+"reg_"+reg+"_nca15jet",'h_reg_'+reg+'_nca15jet_','Number of CA15Jet','-1','4','1','1']) #nca15jet       
         makeplot([dirname+"reg_"+reg+"_ntau",'h_reg_'+reg+'_ntau_','Number of Taus','-1','4','1','1'])
         makeplot([dirname+"reg_"+reg+"_nUncleanTau",'h_reg_'+reg+'_nUncleanTau_','Number of Taus (before cleaning)','-1','6','1','1'])
 #            makeplot([dirname+"reg_"+reg+"_ntaucleaned",'h_reg_'+reg+'_ntaucleaned_','Number of Taus (after Tau cleaning)','-1','4','5','1'])
