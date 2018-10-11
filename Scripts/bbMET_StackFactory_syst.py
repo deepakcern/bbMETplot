@@ -83,8 +83,8 @@ void Plot(){
 time_t now = time(0);
 tm *ltm = localtime(&now);
 TString dirpathname;
-
- TString DirPreName = "/afs/cern.ch/work/d/dekumar/public/monoH/bbDMplots/CMSSW_8_0_26_patch1/src/limitplot/bbMET/bbMETplot/Scripts/syst/";
+bool varbin =true;
+ TString DirPreName = "/afs/cern.ch/work/d/dekumar/public/monoH/bbDMplots/CMSSW_8_0_26_patch1/src/WCRsplitter_withMT/bbMETplot/Scripts/syst/";
  dirpathname = "'''+datestr+'''"; //.Form("%d%1.2d%d",ltm->tm_mday,1 + ltm->tm_mon,1900 + ltm->tm_year);
 
  system("mkdir -p  " + DirPreName+dirpathname +"/bbMETROOT");
@@ -153,7 +153,7 @@ TH1F*  STop;
 TH1F*  GJets;
 TH1F*  QCD;
 //TH1F*  data_obs;
-TString filenamepath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/bkg/");
+TString filenamepath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_with_1GeV/bkg_data/");
 
 // Diboson WW WZ ZZ 0 1 2
 filenameString.push_back(filenamepath + "Output_crab_WW_TuneCUETP8M1_13TeV-pythia8_MC25ns_LegacyMC_20170328.root");
@@ -222,7 +222,7 @@ filenameString.push_back(filenamepath + "Output_crab_QCD_HT2000toInf_TuneCUETP8M
 //
 
 // not used so far
-TString filenamesigpath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/signal/");
+TString filenamesigpath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_with_1GeV/signal/");
 //bbMET Signal Sample 46 - 83
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-400.root");
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-350.root");
@@ -265,7 +265,7 @@ filenameString.push_back(filenamesigpath + "Output_pseudo_NLO_Mchi-100_Mphi-350.
 
 //
 
-TString filenamedatapath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/data/");
+TString filenamedatapath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_with_1GeV/bkg_data/");
 //Data File 84
 filenameString.push_back(filenamedatapath + "data_combined_'''+dtset+'''.root");
 
@@ -356,21 +356,27 @@ TH1F *h_total;
 cout << to_string(nfiles) << endl;
 
 for(int i =0; i<84; i++){
-//    cout << "Reading file #" << to_string(i+1) << ": " << filenameString[i] << endl;
+    //if(VERBOSE) cout << "Reading file #" << to_string(i+1) << ": " << filenameString[i] << endl;
     fIn = new TFile(filenameString[i],"READ");
 
     //if(VARIABLEBINS){
+    if (varbin && (histnameString.Index("hadrecoil") !=string::npos  || histnameString.Index("met") !=string::npos || histnameString.Index("syst") !=string::npos)){
+        h_temp = (TH1F*) fIn->Get(histnameString);
+        Double_t bins[5] = {200,270,345,480,1000};
+        TH1F* h_ = (TH1F *) h_temp->Rebin(4, "hnew", bins);
+        //h_->Sumw2();
+        h_mc[i]= (TH1F*) h_->Clone();
     //h_temp = (TH1F*) fIn->Get(histnameString);
 
     //h_temp->Rebin(REBIN);
     //h_temp->Rebin(3,"hnew",metbins);
     //h_temp->Sumw2();
     //h_mc[i]= (TH1F*)hnew->Clone();
-    //}else{
+    }else{
     h_mc[i] = (TH1F*) fIn->Get(histnameString);
-    //h_mc[i]->Rebin(REBIN);
+    h_mc[i]->Rebin(REBIN);
     h_mc[i]->Sumw2();
-    //}
+    }
     //h_total      = (TH1F*) fIn->Get("nEvents_weight");
      h_total      = (TH1F*) fIn->Get("h_total");
 
@@ -389,16 +395,19 @@ for(int i =0; i<84; i++){
 
 
 fIn = new TFile(filenameString[84],"READ");
-if(VARIABLEBINS){
+//if(VARIABLEBINS){
+if (varbin && (histnameString.Index("hadrecoil") !=string::npos || histnameString.Index("met") !=string::npos  || histnameString.Index("syst") !=string::npos)){
 h_temp =(TH1F*) fIn->Get(histnameString);
-h_temp->Rebin(3,"hnew",metbins);
-h_data= (TH1F*)hnew->Clone();
+Double_t bins[5] = {200,270,345,480,1000};
+//Int_t binnum = sizeof(bins)/sizeof(Double_t) - 1;
+TH1F* h_ = (TH1F *) h_temp->Rebin(4, "hnew", bins);
+//h_->Sum2();
+h_data= (TH1F*)h_->Clone();
 }else{
 h_data = (TH1F*) fIn->Get(histnameString);
-//h_data->Rebin(REBIN);
+h_data->Rebin(REBIN);
 h_data->Sumw2();
 }
-
 
 data_obs = (TH1F*) fIn->Get(histnameString);
 
@@ -1411,10 +1420,10 @@ for dirname in dirnames:
 #    if makeMuCRplots and makeEleCRplots:
 #        regions=['2e1b','2mu1b','2e2b','2mu2b','1e1b','1mu1b','1e2b','1mu2b','1mu1e1b','1mu1e2b']
     if makeMuCRplots:
-        regions=['2mu1b','2mu2b','1mu1b','1mu2b','1mu1e1b','1mu1e2b']
+        regions=['2mu2b','1mu2bW','1mu2bT']
         PUreg=['mu_']
     elif makeEleCRplots:
-        regions=['2e1b','2e2b','1e1b','1e2b']
+        regions=['2e2b','1e2bW','1e2bT']
         PUreg=['ele_']
     elif makePhoCRplots:
         regions=['1gamma1b','1gamma2b']
@@ -1500,84 +1509,84 @@ for dirname in dirnames:
         # makeplot([dirname+"min_dPhi_sr1",'h_min_dPhi_sr1_','min #Delta #phi','0.','3.2','32','1','0','20'])
         # makeplot([dirname+"min_dPhi_sr2",'h_min_dPhi_sr2_','min #Delta #phi','0.','3.2','32','1','0','20'])
 
-        makeplot([dirname+"reg_sr1_hadrecoil",'h_met_sr1_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_hadrecoil",'h_met_sr1_','Missing Transverse Energy','200.','1000','10','1','0','20'])
 
-        makeplot([dirname+"reg_sr1_btag_syst_up",'h_btag_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_btag_syst_down",'h_btag_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_lep_syst_up",'h_lep_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_lep_syst_down",'h_lep_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_btag_syst_up",'h_btag_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_btag_syst_down",'h_btag_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_lep_syst_up",'h_lep_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_lep_syst_down",'h_lep_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
 
-        makeplot([dirname+"reg_sr1_met_syst_up",'h_metTrig_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_met_syst_down",'h_metTrig_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_met_syst_up",'h_metTrig_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_met_syst_down",'h_metTrig_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
 
-        makeplot([dirname+"reg_sr1_jec_syst_up",'h_jec_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_jec_syst_down",'h_jec_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_jec_syst_up",'h_jec_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_jec_syst_down",'h_jec_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
 
-        makeplot([dirname+"reg_sr1_jer_syst_up",'h_jer_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_jer_syst_down",'h_jer_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_jer_syst_up",'h_jer_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_jer_syst_down",'h_jer_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
 
-        makeplot([dirname+"reg_sr1_pho_syst_up",'h_pho_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_pho_syst_down",'h_pho_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_pho_syst_up",'h_pho_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_pho_syst_down",'h_pho_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
 
-        makeplot([dirname+"reg_sr1_ewkZ_syst_up",'h_ewkZ_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_ewkZ_syst_down",'h_ewkZ_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_ewkW_syst_up",'h_ewkW_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_ewkW_syst_down",'h_ewkW_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_ewkTop_syst_up",'h_ewkTop_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr1_ewkTop_syst_down",'h_ewkTop_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_ewkZ_syst_up",'h_ewkZ_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_ewkZ_syst_down",'h_ewkZ_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_ewkW_syst_up",'h_ewkW_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_ewkW_syst_down",'h_ewkW_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_ewkTop_syst_up",'h_ewkTop_syst_sr1_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        #makeplot([dirname+"reg_sr1_ewkTop_syst_down",'h_ewkTop_syst_sr1_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
 
-        makeplot([dirname+"reg_sr2_hadrecoil",'h_met_sr2_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        makeplot([dirname+"reg_sr2_hadrecoil",'h_met_sr2_','Missing Transverse Energy','200.','1000','1','1','0','1'])
 
-        makeplot([dirname+"reg_sr2_btag_syst_up",'h_btag_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_btag_syst_down",'h_btag_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        makeplot([dirname+"reg_sr2_btag_syst_up",'h_btag_syst_sr2_up_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_btag_syst_down",'h_btag_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
 
-        makeplot([dirname+"reg_sr2_lep_syst_up",'h_lep_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_lep_syst_down",'h_lep_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        makeplot([dirname+"reg_sr2_lep_syst_up",'h_lep_syst_sr2_up_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_lep_syst_down",'h_lep_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
 
-        makeplot([dirname+"reg_sr2_met_syst_up",'h_metTrig_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_met_syst_down",'h_metTrig_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        makeplot([dirname+"reg_sr2_met_syst_up",'h_metTrig_syst_sr2_up_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_met_syst_down",'h_metTrig_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
 
-        makeplot([dirname+"reg_sr2_jec_syst_up",'h_jec_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_jec_syst_down",'h_jec_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        makeplot([dirname+"reg_sr2_jec_syst_up",'h_jec_syst_sr2_up_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_jec_syst_down",'h_jec_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
 
-        makeplot([dirname+"reg_sr2_jer_syst_up",'h_jer_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_jer_syst_down",'h_jer_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        makeplot([dirname+"reg_sr2_jer_syst_up",'h_jer_syst_sr2_up_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_jer_syst_down",'h_jer_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
 
-        makeplot([dirname+"reg_sr2_pho_syst_up",'h_pho_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_pho_syst_down",'h_pho_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        makeplot([dirname+"reg_sr2_pho_syst_up",'h_pho_syst_sr2_up_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_pho_syst_down",'h_pho_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
 
-        makeplot([dirname+"reg_sr2_ewkZ_syst_up",'h_ewkZ_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_ewkZ_syst_down",'h_ewkZ_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_ewkW_syst_up",'h_ewkW_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_ewkW_syst_down",'h_ewkW_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_ewkTop_syst_up",'h_ewkTop_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','20'])
-        makeplot([dirname+"reg_sr2_ewkTop_syst_down",'h_ewkTop_syst_sr2_down_','Missing Transverse Energy','200.','1000','10','1','0','20'])
+        makeplot([dirname+"reg_sr2_ewkZ_syst_up",'h_ewkZ_syst_sr2_up_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_ewkZ_syst_down",'h_ewkZ_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_ewkW_syst_up",'h_ewkW_syst_sr2_up_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_ewkW_syst_down",'h_ewkW_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
+        makeplot([dirname+"reg_sr2_ewkTop_syst_up",'h_ewkTop_syst_sr2_up_','Missing Transverse Energy','200.','1000','10','1','0','1'])
+        makeplot([dirname+"reg_sr2_ewkTop_syst_down",'h_ewkTop_syst_sr2_down_','Missing Transverse Energy','200.','1000','1','1','0','1'])
 
     # Region based
     for reg in regions:
-        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.','100','1'])
-        if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_WpT",'h_reg_'+reg+'_WpT_','W candidate p_{T} (GeV)','0.','800.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_hadrecoil",'h_reg_'+reg+'_hadrecoil_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_btag_syst_up",'h_btag_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_btag_syst_down",'h_btag_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_lep_syst_up",'h_lep_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_lep_syst_down",'h_lep_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
+        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.','1','1'])
+        if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_WpT",'h_reg_'+reg+'_WpT_','W candidate p_{T} (GeV)','0.','800.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_hadrecoil",'h_reg_'+reg+'_hadrecoil_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_btag_syst_up",'h_btag_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_btag_syst_down",'h_btag_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_lep_syst_up",'h_lep_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_lep_syst_down",'h_lep_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
 
-        makeplot([dirname+"reg_"+reg+"_met_syst_up",'h_metTrig_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_met_syst_down",'h_metTrig_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
+        makeplot([dirname+"reg_"+reg+"_met_syst_up",'h_metTrig_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_met_syst_down",'h_metTrig_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
 
-        makeplot([dirname+"reg_"+reg+"_jer_syst_up",'h_jer_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_jer_syst_down",'h_jer_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
+        makeplot([dirname+"reg_"+reg+"_jer_syst_up",'h_jer_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_jer_syst_down",'h_jer_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
 
-        makeplot([dirname+"reg_"+reg+"_jec_syst_up",'h_jec_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_jec_syst_down",'h_jec_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
+        makeplot([dirname+"reg_"+reg+"_jec_syst_up",'h_jec_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_jec_syst_down",'h_jec_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
 
-        makeplot([dirname+"reg_"+reg+"_ewkZ_syst_up",'h_ewkZ_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_ewkZ_syst_down",'h_ewkZ_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_ewkW_syst_up",'h_ewkW_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_ewkW_syst_down",'h_ewkW_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_ewkTop_syst_up",'h_ewkTop_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
-        makeplot([dirname+"reg_"+reg+"_ewkTop_syst_down",'h_ewkTop_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','100','1'])
+        makeplot([dirname+"reg_"+reg+"_ewkZ_syst_up",'h_ewkZ_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_ewkZ_syst_down",'h_ewkZ_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_ewkW_syst_up",'h_ewkW_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_ewkW_syst_down",'h_ewkW_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_ewkTop_syst_up",'h_ewkTop_syst_'+reg+'_up_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_ewkTop_syst_down",'h_ewkTop_syst_'+reg+'_down_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
 
 
 #         if not 'QCD' in reg:
