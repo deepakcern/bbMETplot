@@ -38,10 +38,7 @@ inCRfiles=[fold+"/"+i for i in os.listdir(fold) if i.endswith('hadrecoil.root')]
 inSRfiles=[fold+"/"+i for i in ['met_sr1.root','met_sr2.root']]
 inSystfiles=[fold_syst+"/"+i for i in os.listdir(fold_syst) if "syst" in i]
 
-#bins=[200.0,270.0,345.0,480.0,1000.0]
-#bins=[200,275,400,1000]
-#bins=[200.0,300.0,400.0,500.0,1000.0]
-bins=[200.0,270.0,350.0,480.0,1000.0]
+bins=[200,300,500,2000]
 
 def getCRcat(infile):
 
@@ -149,18 +146,16 @@ for infile in sorted(inCRfiles+inSRfiles+inSystfiles):
         sel=h_temp.Integral()
         fdict[CR+"_"+category].cd()
         h_temp.Write()
-        #print "this is old name",newname
+        print "this is old name",newname
         if CR=="SR" and (newname.split('_')[-1]=='QCD' or newname.split('_')[-1]=='DIBOSON' or newname.split('_')[-1]=='Top' or newname.split('_')[-1]=='STop' or newname.split('_')[-1]=='WJets' or newname.split('_')[-1]=='DYJets' or newname.split('_')[-1]=='ZJets' or newname.split('_')[-1]=='GJets'):
             newname=newname.split('_')[-1]
             print "this is new name",newname
         if CR=="SR" and newname.split('_')[-1]=='obs':
             newname='data_obs'
-            #print "this is new name",newname
+            print "this is new name",newname
 
-        print "set this bins",bins
-	print "bins present in the histogram", h_temp2.GetSize()
+        #print "set this name",newname
         h_temp=setHistStyle(h_temp2,bins,newname)
-	print "value from the second bin",h_temp.GetBinContent(1)
 
         f.cd()
         h_temp.Write()
@@ -262,7 +257,7 @@ for inFile in HDMaFiles:
     xsec,MH4=getCross(inFile)
     xsec=float (xsec)
 
-    print "2HDMa model",inFile
+
     print ("Total = "+str(tot))
 
 
@@ -286,11 +281,6 @@ for inFile in HDMaFiles:
 
     f.cd()
     h_temp.Write()
-    if int(MH4)==150:
-	print "RequiredMass: ",MH4
-	print "Integral before scaling",sel
-        print "Integral after scaling",h_temp.Integral()
-	print "Tatal events",tot
 
     if samp.startswith("2HDM"):
         h_temp=setHistStyle(h_temp2,bins,"MH3_600_MH4_"+MH4+"_MH2_600")

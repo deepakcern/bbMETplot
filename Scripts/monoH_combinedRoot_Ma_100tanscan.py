@@ -6,6 +6,8 @@ if len(sys.argv)!=3:
 from ROOT import *
 gROOT.SetBatch(True)
 
+os.system('mkdir DataCardRootFiles_tan_ma100')
+
 path_sig='/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180620_monoH_v2_signal'
 path_sig_2HDM ='/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180627_2HDMa'
 
@@ -27,20 +29,19 @@ def setHistStyle(h_temp2,bins,newname):
 CRnames=['Top','Wenu','Wmunu','Zee','Zmumu','Gamma','SR','signal']
 
 fdict={}
-for CR in CRnames:
-    for reg in ['1b','2b']:
-        fdict[CR+"_"+reg]=TFile("DataCardRootFiles/monoH_2016_"+CR+"_"+reg+".root","RECREATE")
+# for CR in CRnames:
+#     for reg in ['1b','2b']:
+#         fdict[CR+"_"+reg]=TFile("DataCardRootFiles/monoH_2016_"+CR+"_"+reg+".root","RECREATE")
 
-f=TFile("DataCardRootFiles/AllMETHistos.root","RECREATE")
+f=TFile("DataCardRootFiles_tan_ma100/AllMETHistos.root","RECREATE")
 f.cd()
 
 inCRfiles=[fold+"/"+i for i in os.listdir(fold) if i.endswith('hadrecoil.root')]
 inSRfiles=[fold+"/"+i for i in ['met_sr1.root','met_sr2.root']]
 inSystfiles=[fold_syst+"/"+i for i in os.listdir(fold_syst) if "syst" in i]
 
-#bins=[200.0,270.0,345.0,480.0,1000.0]
+#bins=[200,270,345,480,1000]
 #bins=[200,275,400,1000]
-#bins=[200.0,300.0,400.0,500.0,1000.0]
 bins=[200.0,270.0,350.0,480.0,1000.0]
 
 def getCRcat(infile):
@@ -124,6 +125,8 @@ for infile in sorted(inCRfiles+inSRfiles+inSystfiles):
     for samp in samplist:
         # print ("Looking for samp:", samp)
         h_temp2=fin.Get(samp)
+	if samp=='data_obs':
+		print "data_obs", h_temp2.Integral()
 
         if (samp=='bkgSum' or samp=='data_obs') and not 'syst' in infile:
             sampname='data_obs'
@@ -147,20 +150,18 @@ for infile in sorted(inCRfiles+inSRfiles+inSystfiles):
         h_temp=setHistStyle(h_temp2,bins,shortname)
         #if CR=="SR": h_temp.Scale(20)
         sel=h_temp.Integral()
-        fdict[CR+"_"+category].cd()
-        h_temp.Write()
-        #print "this is old name",newname
+        # fdict[CR+"_"+category].cd()
+        # h_temp.Write()
+        print "this is old name",newname
         if CR=="SR" and (newname.split('_')[-1]=='QCD' or newname.split('_')[-1]=='DIBOSON' or newname.split('_')[-1]=='Top' or newname.split('_')[-1]=='STop' or newname.split('_')[-1]=='WJets' or newname.split('_')[-1]=='DYJets' or newname.split('_')[-1]=='ZJets' or newname.split('_')[-1]=='GJets'):
             newname=newname.split('_')[-1]
             print "this is new name",newname
         if CR=="SR" and newname.split('_')[-1]=='obs':
             newname='data_obs'
-            #print "this is new name",newname
+            print "this is new name",newname, "this is integral", h_temp.Integral()
 
-        print "set this bins",bins
-	print "bins present in the histogram", h_temp2.GetSize()
+        #print "set this name",newname
         h_temp=setHistStyle(h_temp2,bins,newname)
-	print "value from the second bin",h_temp.GetBinContent(1)
 
         f.cd()
         h_temp.Write()
@@ -189,65 +190,12 @@ def getCross(file):
 monoHFiles=[path_sig+"/"+i for i in os.listdir(path_sig+"/") if i.endswith('.root')]
 
 HDMaFiles=[path_sig_2HDM+"/"+i for i in os.listdir(path_sig_2HDM+"/") if i.endswith('.root')]
-
-# ttDMFiles=[fold+"/ttDM/"+i for i in os.listdir(fold+"/ttDM/") if i.endswith('.root')]
-
-#regions=['2e1b','2mu1b','2e2b','2mu2b','1e1b','1mu1b','1e2b','1mu2b','1mu1e1b','1mu1e2b']
 regions=['2e2b','2mu2b','1e2b','1mu2b','1mu1e2b']
 
 lumi=35900.
 
-for sig_file in monoHFiles:
-    fin=TFile(sig_file,"READ")
-    h_total=fin.Get('h_total_weight')
-    tot=h_total.Integral()
-
-    Mchi=''
-    MZp=''
-
-    for partname in sig_file.split('/')[-1].strip('MC25ns_LegacyMC_20170328.root').split('_'):
-        print "printing part", partname
-        if partname.startswith('MChi'): Mchi=partname.split('-')[-1]
-        if partname.startswith('MZp'): MZp=partname.split('-')[-1]
-
-    print ""
-    print "this file",sig_file.split('/')[-1]#+": "+Mchi+" "+MZp
-    print "these are mass points", Mchi, MZp
-    print "Total = "+str(tot)
-
-    if 'ZpBaryonic' in sig_file:
-        samp='MonoHbb_ZpBaryonic'
-    else:
-        print "Code is not reading file properly"
-    # elif 'NLO' in infile:
-    #     samp='bbNLO'
-    # else:
-    #     samp='bbLO'
-    #
-    # if "pseudo" in infile:
-    #     samp+="_pseudo"
-    # else:
-    #     samp+="_scalar"
-
-    # Store SR1 and SR2 in the signal_*b file
-    # for sr,category in ['sr2','2b']:#[['sr1','1b'],['sr2','2b']]:
-    # print "signal file",sig_file
-    # h_temp2=fin.Get('h_met_'+sr+'_')
-    h_temp2=fin.Get('h_met_sr2_')
-    print "sr2 integral", h_temp2.Integral()
-    # newname=samp+"_"+category+"_"+Mchi+"_"+MZp
-    newname=samp+"_Mchi_"+Mchi+"_MZp_"+MZp
-
-    h_temp=setHistStyle(h_temp2,bins,newname)
-    sel=h_temp.Integral()
-    h_temp.Scale(lumi/tot)
-
-    fdict['signal_'+category].cd()
-    h_temp.Write()
-
-    f.cd()
-    h_temp.Write()
-
+MH4_100_CS=[0.9784,0.40881106623,0.163902952229,0.085717422469,0.051429466316,0.033927378304,0.0244781991123,0.0153060916341,0.01224561348,0.012612107274,0.0181328446374,0.0677053692793]
+tan_value=['05','1','2','3','4','5','6','8','10','15','20','50']
 for inFile in HDMaFiles:
     fin=TFile(inFile,"READ")
     h_total=fin.Get('h_total_weight')
@@ -257,94 +205,26 @@ for inFile in HDMaFiles:
     MH2='600'
 
     MH4 = inFile.split('/')[-1].strip('.root').split('_')[-4]
-    if 'MH4_100' in inFile.split('/')[-1]: continue
+    if 'MH4_100' not in inFile.split('/')[-1]: continue
 
-    xsec,MH4=getCross(inFile)
-    xsec=float (xsec)
-
-    print "2HDMa model",inFile
     print ("Total = "+str(tot))
 
+    for i in range(len(MH4_100_CS)):
+        if '2HDMa' in inFile:
+            samp='2HDMa_gg_tb_1p0_MH3_600'
+        else:
+            print ("Code is not reading file properly")
 
-    if '2HDMa' in inFile:
-        samp='2HDMa_gg_tb_1p0_MH3_600'
-    else:
-        print ("Code is not reading file properly")
 
+        h_temp2=fin.Get('h_met_sr2_')
+        print ("sr2 integral", h_temp2.Integral())
 
-    h_temp2=fin.Get('h_met_sr2_')
-    print ("sr2 integral", h_temp2.Integral())
-    # newname=samp+"_"+category+"_"+Mchi+"_"+MZp
-    newname=samp+"_MH4_"+MH4+"_MH2_600"
+        newname=samp+"_MH4_"+MH4+"_MH2_600"+"CS_"+tan_value[i]
 
-    h_temp=setHistStyle(h_temp2,bins,newname)
-    sel=h_temp.Integral()
-    h_temp.Scale(lumi*xsec/tot)
-
-    fdict['signal_'+category].cd()
-    h_temp.Write()
-
-    f.cd()
-    h_temp.Write()
-    if int(MH4)==150:
-	print "RequiredMass: ",MH4
-	print "Integral before scaling",sel
-        print "Integral after scaling",h_temp.Integral()
-	print "Tatal events",tot
-
-    if samp.startswith("2HDM"):
-        h_temp=setHistStyle(h_temp2,bins,"MH3_600_MH4_"+MH4+"_MH2_600")
-        h_temp.Scale(lumi*xsec/tot)
-
-        fdict['SR_'+category].cd()
+        h_temp=setHistStyle(h_temp2,bins,newname)
+        sel=h_temp.Integral()
+        h_temp.Scale(lumi*(MH4_100_CS[i])/tot)
+        f.cd()
         h_temp.Write()
-    #
-    # if samp=="bbNLO_scalar" and Mchi=="Mchi-1" and Mphi=="Mphi-300":
-    #     h_temp=setHistStyle(h_temp2,bins,"sig")
-    #     h_temp.Scale(lumi/tot)
-    #
-    #     fdict['SR_'+category].cd()
-    #     h_temp.Write()
 
-    print (": Count %.2f, Sel Eff. = %.8f"%(sel,sel/tot))
-
-    # # Store all CR
-
-    for reg in regions:
-        h_temp2=fin.Get('h_reg_'+reg+'_'+'hadrecoil_')
-        if samp.startswith("2HDM"):
-            pseudofile=fold+"/"+"reg_"+reg+"_hadrecoil.root"
-            CR,category=getCRcat(pseudofile)
-            h_temp=setHistStyle(h_temp2,bins,"MH3_600_MH4_"+MH4+"_MH2_600")
-            h_temp.Scale(lumi*xsec/tot)
-            if h_temp.Integral()==0.:
-                for ibin in range(h_temp.GetSize()-1):
-                    h_temp.SetBinContent(ibin,6e-4)
-            if h_temp.Integral()<0.:
-                h_temp.Scale(6e-4/h_temp.Integral())
-
-            fdict[CR+'_'+category].cd()
-            h_temp.Write()
-
-        #if samp.startswith("bb"):
-            #h_temp=setHistStyle(h_temp2,bins,samp[2:]+"_mphi_"+Mphi.split('-')[1]+"_mchi_"+Mchi.split('-')[1])
-            #h_temp.Scale(lumi/tot)
-
-            #for CR in CRnames:
-                #fdict[CR+'_'+category].cd()
-                #h_temp.Write()
-
-        #if samp=="bbNLO_scalar" and Mchi=="Mchi-1" and Mphi=="Mphi-300":
-            #h_temp=setHistStyle(h_temp2,bins,"sig")
-            #h_temp.Scale(lumi/tot)
-
-            #for CR in CRnames:
-                #fdict[CR+'_'+category].cd()
-                #h_temp.Write()
-
-
-
-for CR in CRnames:
-    for reg in ['1b','2b']:
-        fdict[CR+"_"+reg].Close()
 f.Close()

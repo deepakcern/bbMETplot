@@ -6,6 +6,13 @@ if len(sys.argv)!=3:
 from ROOT import *
 gROOT.SetBatch(True)
 
+os.system('rm -rf DataCardRootFiles_ZpModel')
+os.system('mkdir DataCardRootFiles_ZpModel')
+
+Xsec_MZp=[]
+Mass_MZp=[]
+Eff_MZp=[]
+
 path_sig='/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180620_monoH_v2_signal'
 path_sig_2HDM ='/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180627_2HDMa'
 
@@ -31,7 +38,7 @@ for CR in CRnames:
     for reg in ['1b','2b']:
         fdict[CR+"_"+reg]=TFile("DataCardRootFiles/monoH_2016_"+CR+"_"+reg+".root","RECREATE")
 
-f=TFile("DataCardRootFiles/AllMETHistos.root","RECREATE")
+f=TFile("DataCardRootFiles_ZpModel/AllMETHistos.root","RECREATE")
 f.cd()
 
 inCRfiles=[fold+"/"+i for i in os.listdir(fold) if i.endswith('hadrecoil.root')]
@@ -157,10 +164,10 @@ for infile in sorted(inCRfiles+inSRfiles+inSystfiles):
             newname='data_obs'
             #print "this is new name",newname
 
-        print "set this bins",bins
-	print "bins present in the histogram", h_temp2.GetSize()
+        #print "set this bins",bins
+	    #print "bins present in the histogram", h_temp2.GetSize()
         h_temp=setHistStyle(h_temp2,bins,newname)
-	print "value from the second bin",h_temp.GetBinContent(1)
+	    #print "value from the second bin",h_temp.GetBinContent(1)
 
         f.cd()
         h_temp.Write()
@@ -195,9 +202,10 @@ HDMaFiles=[path_sig_2HDM+"/"+i for i in os.listdir(path_sig_2HDM+"/") if i.endsw
 #regions=['2e1b','2mu1b','2e2b','2mu2b','1e1b','1mu1b','1e2b','1mu2b','1mu1e1b','1mu1e2b']
 regions=['2e2b','2mu2b','1e2b','1mu2b','1mu1e2b']
 
-lumi=35900.
+lumi=35500.
 
 for sig_file in monoHFiles:
+    XsecFile=open("crosssectionZpBaryonic.txt",'r')
     fin=TFile(sig_file,"READ")
     h_total=fin.Get('h_total_weight')
     tot=h_total.Integral()
@@ -206,7 +214,7 @@ for sig_file in monoHFiles:
     MZp=''
 
     for partname in sig_file.split('/')[-1].strip('MC25ns_LegacyMC_20170328.root').split('_'):
-        print "printing part", partname
+        #print "printing part", partname
         if partname.startswith('MChi'): Mchi=partname.split('-')[-1]
         if partname.startswith('MZp'): MZp=partname.split('-')[-1]
 
@@ -240,13 +248,38 @@ for sig_file in monoHFiles:
 
     h_temp=setHistStyle(h_temp2,bins,newname)
     sel=h_temp.Integral()
-    h_temp.Scale(lumi/tot)
+    isCS=False
+    for line in XsecFile:
+        #print "Line of text file",line
+        mzp=line.split()[0]
+        mchi=line.split()[1]
+        CSZP=float(line.split()[2])
+        if int(mzp)==int(MZp) and int(mchi)==int(Mchi) and int(Mchi)==1:
+            print "MZP: ", mzp,"mchi: ", mchi,"CS: ",line.split()[2]
+            isCS=True
+	    Xsec_MZp.append(CSZP)
+	    Eff_MZp.append(sel/tot) 
+	    print "Eff",sel/tot
+	    Mass_MZp.append(int(mzp))
+	    print "Integral before scaling", h_temp.Integral()
+            h_temp.Scale(lumi*CSZP/tot)
+ 	    print "Integral after scaling :", h_temp.Integral()
+	    print "lumi and CS: ", lumi, CSZP
+            print "Total events: ", tot
+            fdict['signal_'+category].cd()
+            h_temp.Write()
 
-    fdict['signal_'+category].cd()
-    h_temp.Write()
+            f.cd()
+            h_temp.Write()
+            break
 
-    f.cd()
-    h_temp.Write()
+
+    if not isCS:
+        print "CS is not available for the mass points: ", MZp, Mchi
+
+    XsecFile.close()
+
+
 
 for inFile in HDMaFiles:
     fin=TFile(inFile,"READ")
@@ -262,7 +295,7 @@ for inFile in HDMaFiles:
     xsec,MH4=getCross(inFile)
     xsec=float (xsec)
 
-    print "2HDMa model",inFile
+
     print ("Total = "+str(tot))
 
 
@@ -286,11 +319,6 @@ for inFile in HDMaFiles:
 
     f.cd()
     h_temp.Write()
-    if int(MH4)==150:
-	print "RequiredMass: ",MH4
-	print "Integral before scaling",sel
-        print "Integral after scaling",h_temp.Integral()
-	print "Tatal events",tot
 
     if samp.startswith("2HDM"):
         h_temp=setHistStyle(h_temp2,bins,"MH3_600_MH4_"+MH4+"_MH2_600")
@@ -348,3 +376,63 @@ for CR in CRnames:
     for reg in ['1b','2b']:
         fdict[CR+"_"+reg].Close()
 f.Close()
+
+
+for CR in CRnames:
+    for reg in ['1b','2b']:
+        fdict[CR+"_"+reg].Close()
+f.Close()
+
+
+
+from ROOT import TGraph, TFile, TGraphAsymmErrors, gStyle, TCanvas, TLatex
+from array import array
+gStyle.SetFrameLineWidth(3)
+gStyle.SetOptTitle(0)
+gStyle.SetOptStat(0)
+gStyle.SetLegendBorderSize(2)
+gStyle.SetFillColor(2)
+gStyle.SetLineWidth(1)
+c=TCanvas()
+
+latex =  TLatex();
+latex.SetNDC();
+latex.SetTextSize(0.04);
+latex.SetTextAlign(31);
+latex.SetTextAlign(11);
+print ("Xsec",Xsec_MZp)
+print ("Mass",Mass_MZp)
+print ("Eff", Eff_MZp)
+
+newCS=[]
+newEff=[]
+Mass=[10,20,50,100,200,300,500,1000,2000]
+
+for i in range(len(Mass)):
+	for j in range(len(Mass_MZp)):
+		if int(Mass[i])==int(Mass_MZp[j]):
+			print "j",j
+			newCS.append(Xsec_MZp[j])
+			newEff.append(Eff_MZp[j])
+
+print "newCS", newCS
+x=array("d",Mass)
+y=array("d",newEff)
+n=len(x)
+gr = TGraph( n, x, y )
+#gr.SetTitle("Signal Efficiency Vs MH4")
+gr.GetXaxis().SetTitle("M_Zp[GeV]")
+#gr.GetYaxis().SetTitle("Cross Section [pb]")
+gr.GetYaxis().SetTitle("Efficiency")
+gr.GetXaxis().SetTitleSize(.04)
+gr.GetYaxis().SetTitleSize(.04)
+# gr.GetYaxis().SetRangeUser(.001,.35)
+#gr.GetXaxis().SetRangeUser(0.0,0.71)
+gr.SetLineColor(2)
+gr.SetLineWidth(3)
+
+gr.Draw("AC*")
+latex.DrawLatex(0.18, 0.93, "ZpBaryonic Model,   h #rightarrow b#bar{b}" ) #       M_{A}=600 GeV, M_{a}=100 GeV")#r"                             35.9 fb^{-1}(13 TeV)");
+
+c.SaveAs("Eff_1d.pdf")
+c.SaveAs("Eff_1d.png")

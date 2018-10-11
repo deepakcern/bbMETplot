@@ -2,20 +2,20 @@ import os
 import sys
 import datetime
 import sys, optparse
-## Ratio is added Data/MC
+## Ratio is added Data/MC 
 ## Template macro is fed to a python variable
-## 1.)  is created on DateBase
-## 2.) Starting Extension of your Dir..Like
+## 1.)  is created on DateBase 
+## 2.) Starting Extension of your Dir..Like 
 ## in a day you want 2 directories jsut
 ## change the DirPreName
 ## Monika Mittal Khuarana
 ## Raman Khurana
 
 
-#if len(sys.argv) < 2 :
+#if len(sys.argv) < 2 : 
 #    print "insufficiency inputs provided, please provide the directory with input files"
 ##just for argument, the input file path is explicitly provided in line no 101
-#if len(sys.argv) ==2 :
+#if len(sys.argv) ==2 : 
 #    print "plotting from directory ",sys.argv[1]
 #    inputdirname = sys.argv[1]
 
@@ -41,12 +41,12 @@ if options.plotMuRegs==None:
     makeMuCRplots = False
 else:
     makeMuCRplots = options.plotMuRegs
-
+    
 if options.plotEleRegs==None:
     makeEleCRplots = False
 else:
     makeEleCRplots = options.plotEleRegs
-
+    
 if options.plotPhoRegs==None:
     makePhoCRplots = False
 else:
@@ -61,7 +61,7 @@ if options.verbose==None:
     verbose = False
 else:
     verbose = options.verbose
-
+        
 if options.datasetname.upper()=="SE":
     dtset="SE"
 elif options.datasetname.upper()=="SP":
@@ -87,163 +87,22 @@ macro='''
 void Plot(){
 time_t now = time(0);
 tm *ltm = localtime(&now);
-
-bool varbin = true;
-bool AddSig = false;
-
-auto legend_sig = new TLegend(0.6,0.5,0.98,0.7);
-auto legend_zpsig = new TLegend(0.4,0.5,0.6,0.7);
-
-auto legend_sig_mass = new TLegend(0.7,0.5,0.98,0.7);
-auto legend_zpsig_mass = new TLegend(0.5,0.5,0.7,0.7);
-
-float sig_lumi = 35.545*1000;
-
-zp_f1 = new TFile("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_signal_ZpBaryonic_v2/Output_crab_MonoHbb_ZpBaryonic_MZp-500_MChi-1_13TeV-madgraph_MC25ns_LegacyMC_20170328.root","READ");
-zp_f2 = new TFile("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_signal_ZpBaryonic_v2/Output_crab_MonoHbb_ZpBaryonic_MZp-1000_MChi-1_13TeV-madgraph_MC25ns_LegacyMC_20170328.root","READ");
-
-h_zpsig1 = (TH1F*)zp_f1->Get("h_met_sr2_");
-h_zpsig2 = (TH1F*)zp_f2->Get("h_met_sr2_");
-
-h_total_sig1  = (TH1F*)zp_f1->Get("h_total");
-h_total_sig2  = (TH1F*)zp_f2->Get("h_total");
-
-total_zpsig1 = h_total_sig1->Integral();
-total_zpsig2 = h_total_sig2->Integral();
-
-hmbb_zpsig1 = (TH1F*)zp_f1->Get("h_bb_Mass_sr2_");
-hmbb_zpsig2 = (TH1F*)zp_f2->Get("h_bb_Mass_sr2_");
-
-
-float MZP_500_Xsec = 1.0969;
-float MZP_1000_Xsec = 0.201769753605;
-
-h_zpsig1->Scale((MZP_500_Xsec*sig_lumi)/total_zpsig1);
-h_zpsig2->Scale((MZP_1000_Xsec*sig_lumi)/total_zpsig2);
-
-hmbb_zpsig1->Scale((MZP_500_Xsec*sig_lumi)/total_zpsig1);
-hmbb_zpsig2->Scale((MZP_1000_Xsec*sig_lumi)/total_zpsig2);
-
-h_zpsig1->SetLineWidth(5);
-h_zpsig1->SetLineColor(4);
-h_zpsig1->SetLineStyle(8);
-
-h_zpsig2->SetLineWidth(5);
-h_zpsig2->SetLineColor(46);
-h_zpsig2->SetLineStyle(8);
-
-hmbb_zpsig1->SetLineWidth(5);
-hmbb_zpsig1->SetLineColor(4);
-hmbb_zpsig1->SetLineStyle(8);
-
-hmbb_zpsig2->SetLineWidth(5);
-hmbb_zpsig2->SetLineColor(40);
-hmbb_zpsig2->SetLineStyle(8);
-
-legend_zpsig->SetHeader("ZpBaryonic");
-legend_zpsig->AddEntry(h_zpsig1,"M_{Zp}=500 GeV","l");
-legend_zpsig->AddEntry(h_zpsig2,"M_{Zp}=1000 GeV","l");
-
-legend_zpsig_mass->SetHeader("ZpBaryonic");
-legend_zpsig_mass->AddEntry(h_zpsig1,"M_{Zp}=500 GeV","l");
-legend_zpsig_mass->AddEntry(h_zpsig2,"M_{Zp}=1000 GeV","l");
-
-
-
-sig_f1 = new TFile("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_signal_2HDMa_v2/Output_t3store2_2HDMa_gg_tb_1p0_MH3_600_MH4_150_MH2_600_MHC.root","READ");
-sig_f2 = new TFile("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_signal_2HDMa_v2/Output_t3store2_2HDMa_gg_tb_1p0_MH3_600_MH4_300_MH2_600_MHC.root","READ");
-sig_f3 = new TFile("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_signal_2HDMa_v2/Output_t3store2_2HDMa_gg_tb_1p0_MH3_600_MH4_400_MH2_600_MHC.root","READ");
-
-h_sig1 = (TH1F*)sig_f1->Get("h_met_sr2_");
-h_sig2 = (TH1F*)sig_f2->Get("h_met_sr2_");
-h_sig3 = (TH1F*)sig_f3->Get("h_met_sr2_");
-
-h_total_sig1      = (TH1F*)sig_f1->Get("h_total");
-h_total_sig2      = (TH1F*)sig_f2->Get("h_total");
-h_total_sig3      = (TH1F*)sig_f3->Get("h_total");
-
-total_sig1=h_total_sig1->Integral();
-total_sig2=h_total_sig2->Integral();
-total_sig3=h_total_sig3->Integral();
-
-hmbb_sig1 = (TH1F*)sig_f1->Get("h_bb_Mass_sr2_");
-hmbb_sig2 = (TH1F*)sig_f2->Get("h_bb_Mass_sr2_");
-hmbb_sig3 = (TH1F*)sig_f3->Get("h_bb_Mass_sr2_");
-
-
-float MH4_150_Xsec = 0.3217;
-float MH4_300_Xsec = 0.1224;
-float MH4_400_Xsec = 0.0423;
-
-//std::cout << total_sig1 << " " << total_sig2 << " "<<total_sig3 << std::endl;
-
-//cout << "scal1: " << (MH4_150_Xsec*sig_lumi)/total_sig1 << std::endl;
-//cout << "scal2: " << (MH4_300_Xsec*sig_lumi)/total_sig1 << std::endl;
-//cout << "scal3: " << (MH4_400_Xsec*sig_lumi)/total_sig1 << std::endl;
-
-h_sig1->Scale((MH4_150_Xsec*sig_lumi)/total_sig1);
-h_sig2->Scale((MH4_300_Xsec*sig_lumi)/total_sig2);
-h_sig3->Scale((MH4_400_Xsec*sig_lumi)/total_sig3);
-
-hmbb_sig1->Scale((MH4_150_Xsec*sig_lumi)/total_sig1);
-hmbb_sig2->Scale((MH4_300_Xsec*sig_lumi)/total_sig2);
-hmbb_sig3->Scale((MH4_400_Xsec*sig_lumi)/total_sig3);
-
-
-
-h_sig1->SetLineWidth(5);
-h_sig1->SetLineColor(2);
-h_sig1->SetLineStyle(8);
-
-h_sig2->SetLineWidth(5);
-h_sig2->SetLineColor(6);
-h_sig2->SetLineStyle(8);
-
-
-h_sig3->SetLineWidth(5);
-h_sig3->SetLineColor(8);
-h_sig3->SetLineStyle(8);
-
-
-hmbb_sig1->SetLineWidth(5);
-hmbb_sig1->SetLineColor(2);
-hmbb_sig1->SetLineStyle(8);
-
-hmbb_sig2->SetLineWidth(5);
-hmbb_sig2->SetLineColor(6);
-hmbb_sig2->SetLineStyle(8);
-
-hmbb_sig3->SetLineWidth(5);
-hmbb_sig3->SetLineColor(8);
-hmbb_sig3->SetLineStyle(8);
-
-legend_sig->SetHeader("2HDM+a, M_{A}=600 GeV");
-legend_sig->AddEntry(h_sig1,"M_{a}=150 GeV","l");
-legend_sig->AddEntry(h_sig2,"M_{a}=300 GeV","l");
-legend_sig->AddEntry(h_sig3,"M_{a}=400 GeV","l");
-
-legend_sig_mass->SetHeader("2HDM+a, M_{A}=600 GeV");
-legend_sig_mass->AddEntry(h_sig1,"M_{a}=150 GeV","l");
-legend_sig_mass->AddEntry(h_sig2,"M_{a}=300 GeV","l");
-legend_sig_mass->AddEntry(h_sig3,"M_{a}=500 GeV","l");
-
-
-
 TString dirpathname;
- TString DirPreName = "/afs/cern.ch/work/d/dekumar/public/monoH/bbDMplots/CMSSW_8_0_26_patch1/src/WCRsplitter_withMT/bbMETplot/Scripts/test/";
- dirpathname = "'''+datestr+'''"; //.Form("%d%1.2d%d",ltm->tm_mday,1 + ltm->tm_mon,1900 + ltm->tm_year);
 
+ TString DirPreName = "/afs/cern.ch/work/d/dekumar/public/monoH/bbDMplots/CMSSW_8_0_26_patch1/src/limitplot/bbMET/bbMETplot/Scripts/test/";
+ dirpathname = "'''+datestr+'''"; //.Form("%d%1.2d%d",ltm->tm_mday,1 + ltm->tm_mon,1900 + ltm->tm_year);
+ 
  system("mkdir -p  " + DirPreName+dirpathname +"/bbMETROOT");
  system("mkdir -p  " + DirPreName+dirpathname +"/bbMETPdf");
  system("mkdir -p  " + DirPreName+dirpathname +"/bbMETPng");
-
-
+ 
+ 
  ofstream mout;
  mout.open(DirPreName+dirpathname +"/HISTPATH"+dirpathname +"Integral.txt",std::ios::app);
  ofstream rout;
  rout.open(DirPreName+dirpathname +"/HISTPATH"+dirpathname +"Integral.html",std::ios::app);
  ofstream tableout;
- tableout.open(DirPreName+dirpathname +"/HISTPATH"+dirpathname +"IntegralWithError.txt",std::ios::app);
+ tableout.open(DirPreName+dirpathname +"/HISTPATH"+dirpathname +"IntegralWithError.txt",std::ios::app);                                                                  
  TString outputshapefilename = DirPreName+dirpathname +"/HISTPATH.root";
  TFile *fshape = new TFile(outputshapefilename,"RECREATE");
 
@@ -281,10 +140,10 @@ std::vector<TString> filenameString;
 
 // histogram declaration for shape analysis
 //TH1F*  monoHbbM600;
-//TH1F*  monoHbbM800;
+//TH1F*  monoHbbM800; 
 //TH1F*  monoHbbM1000;
 //TH1F*  monoHbbM1200;
-//TH1F*  monoHbbM1400;
+//TH1F*  monoHbbM1400; 
 //TH1F*  monoHbbM1700;
 //TH1F*  monoHbbM2000;
 //TH1F*  monoHbbM2500;
@@ -298,7 +157,7 @@ TH1F*  STop;
 TH1F*  GJets;
 TH1F*  QCD;
 //TH1F*  data_obs;
-TString filenamepath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_withMT/bkg_data/");
+TString filenamepath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/bkg/"); 
 
 // Diboson WW WZ ZZ 0 1 2
 filenameString.push_back(filenamepath + "Output_crab_WW_TuneCUETP8M1_13TeV-pythia8_MC25ns_LegacyMC_20170328.root");
@@ -354,7 +213,7 @@ filenameString.push_back(filenamepath + "Output_crab_GJets_HT-600ToInf_TuneCUETP
 filenameString.push_back(filenamepath + "Output_crab_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8.root");
 //
 
-// QCD 37,38,39,40,41,42,43,44,45
+// QCD 37,38,39,40,41,42,43,44,45 
 filenameString.push_back(filenamepath + "Output_crab_QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root");  //dummy
 filenameString.push_back(filenamepath + "Output_crab_QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root");  //dummy
 filenameString.push_back(filenamepath + "Output_crab_QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root");  //dummy
@@ -367,7 +226,7 @@ filenameString.push_back(filenamepath + "Output_crab_QCD_HT2000toInf_TuneCUETP8M
 //
 
 // not used so far
-TString filenamesigpath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_withMT/signal/");
+TString filenamesigpath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/signal/"); 
 //bbMET Signal Sample 46 - 83
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-400.root");
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-350.root");
@@ -410,7 +269,7 @@ filenameString.push_back(filenamesigpath + "Output_pseudo_NLO_Mchi-100_Mphi-350.
 
 //
 
-TString filenamedatapath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_withMT/bkg_data/");
+TString filenamedatapath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/20180615_monoH_v2_uscms/data/");
 //Data File 84
 filenameString.push_back(filenamedatapath + "data_combined_'''+dtset+'''.root");
 
@@ -427,7 +286,7 @@ const int nfiles = (int) filenameString.size();
 float Integral[nfiles] , Integral_Error[nfiles];
 
 //kfactor * lo crossection
-//check it once
+//check it once 
 
 float Xsec[nfiles];
 
@@ -505,26 +364,20 @@ for(int i =0; i<84; i++){
     fIn = new TFile(filenameString[i],"READ");
 
     //if(VARIABLEBINS){
-    if (varbin && histnameString.Index("hadrecoil") !=string::npos){
-        h_temp = (TH1F*) fIn->Get(histnameString);
-        Double_t bins[5] = {200,270,345,480,1000};
-        TH1F* h_ = (TH1F *) h_temp->Rebin(4, "hnew", bins);
-        h_->Sumw2();
-        h_mc[i]= (TH1F*) h_->Clone();
     //h_temp = (TH1F*) fIn->Get(histnameString);
 
     //h_temp->Rebin(REBIN);
     //h_temp->Rebin(3,"hnew",metbins);
     //h_temp->Sumw2();
     //h_mc[i]= (TH1F*)hnew->Clone();
-    }else{
+    //}else{
     h_mc[i] = (TH1F*) fIn->Get(histnameString);
     h_mc[i]->Rebin(REBIN);
     h_mc[i]->Sumw2();
-    }
+    //}
     //h_total      = (TH1F*) fIn->Get("nEvents_weight");
      h_total      = (TH1F*) fIn->Get("h_total");
-
+     
     //std::cout<<" normalization for = "<<i<<"  "<<filenameString[i]<<"   "<<h_mc[i]->Integral()
     //<<std::endl;
 
@@ -540,14 +393,10 @@ for(int i =0; i<84; i++){
 
 
 fIn = new TFile(filenameString[84],"READ");
-//if(VARIABLEBINS){
-if (varbin && histnameString.Index("hadrecoil") !=string::npos){
+if(VARIABLEBINS){
 h_temp =(TH1F*) fIn->Get(histnameString);
-Double_t bins[5] = {200,270,345,480,1000};
-//Int_t binnum = sizeof(bins)/sizeof(Double_t) - 1;
-TH1F* h_ = (TH1F *) h_temp->Rebin(4, "hnew", bins);
-h_->Sum2();
-h_data= (TH1F*)h_->Clone();
+h_temp->Rebin(3,"hnew",metbins);
+h_data= (TH1F*)hnew->Clone();
 }else{
 h_data = (TH1F*) fIn->Get(histnameString);
 h_data->Rebin(REBIN);
@@ -578,13 +427,13 @@ for(int ttjets = 27; ttjets < 31; ttjets++){
 STop->Add(h_mc[ttjets]);}
 
 GJets   = (TH1F*)h_mc[31]->Clone();
-for(int gjets = 32; gjets < 36; gjets++){
+for(int gjets = 32; gjets < 36; gjets++){              
 GJets->Add(h_mc[gjets]);}
 
 TT        = (TH1F*)h_mc[36]->Clone();
 
 QCD   = (TH1F*)h_mc[37]->Clone();
-for(int qcd = 38; qcd < 46; qcd++){
+for(int qcd = 38; qcd < 46; qcd++){              
 QCD->Add(h_mc[qcd]);}
 
 float ZJetsCount    =   ZJets->Integral();
@@ -607,7 +456,7 @@ if (1) {
     STLegend    =   "Single t";
     TTLegend    =   "Top";
     VVLegend    =   "VV";
-    QCDLegend   =   "QCD Multijet";
+    QCDLegend   =   "QCD Multijet"; 
 } else {
     DYLegend    =   "Z(ll) + jets: "+std::to_string(int(DYJetsCount));
     WLegend     =   "W(l#nu) + jets: "+std::to_string(int(WJetsCount));
@@ -623,13 +472,13 @@ if (1) {
 
  //Legend
  TLegend *legend;
-
+ 
 /* if(NORATIOPLOT){
     legend = new TLegend(0.57, 0.69, 0.94,0.90,NULL,"brNDC");
     legend->SetTextSize(0.020);
  }else{ */
-
-
+ 
+ 
 float zj_i = ZJets->Integral();
 float dyj_i = DYJets->Integral();
 float wj_i = WJets->Integral();
@@ -639,8 +488,8 @@ float gj_i = GJets->Integral();
 float db_i = DIBOSON->Integral();
 float qc_i = QCD->Integral();
 float mcsum = zj_i+dyj_i+wj_i+tt_i+st_i+gj_i+db_i+qc_i;
-
-legend = new TLegend(0.60, 0.70, 0.94,0.94,NULL,"brNDC");
+ 
+legend = new TLegend(0.60, 0.70, 0.94,0.94,NULL,"brNDC"); 
 legend->SetTextSize(0.020);
 
  legend->SetBorderSize(0);
@@ -651,23 +500,23 @@ legend->SetTextSize(0.020);
  legend->SetFillStyle(0);
  legend->SetTextFont(42);
  legend->SetNColumns(2);
-
+ 
 /* if (QCDSF==1) {
     legend->AddEntry(h_data,"Data","PEL");
- }
-
+ } 
+ 
  if (!NORATIOPLOT && QCDSF!=1) {
      legend->AddEntry(h_data,"Data","PEL");
      legend->AddEntry(DYJets,DYLegend,"f");
  } else {
      legend->AddEntry(ZJets,ZLegend,"f");
  }      */
-
+ 
  cout << "DY:" << dyj_i << endl;
  cout << "Total:" << mcsum << endl;
-
+ 
  float legendthres = 0.008;
-
+ 
  if (!NORATIOPLOT) legend->AddEntry(h_data,"Data","PEL");
  if (dyj_i/mcsum > legendthres) legend->AddEntry(DYJets,DYLegend,"f");
  if (zj_i/mcsum > legendthres) legend->AddEntry(ZJets,ZLegend,"f");
@@ -731,7 +580,7 @@ QCD->SetLineWidth(0);
 
 
 //hs->Add(DIBOSON,"hist");
-//hs->Add(ZJets,"hist");
+//hs->Add(ZJets,"hist"); 
 //hs->Add(GJets,"hist");
 
 //if (order_==1) {
@@ -770,15 +619,15 @@ hs->Add(QCD,"hist");
 hs->Add(STop,"hist");
 hs->Add(TT,"hist");
 hs->Add(WJets,"hist");
-hs->Add(ZJets,"hist");
+hs->Add(ZJets,"hist"); 
 hs->Add(DYJets,"hist");
 
 h_data->SetMarkerColor(kBlack);
 h_data->SetMarkerStyle(20);
 //float maxi = h_data->GetMaximum();
 
- TH1F *Stackhist = (TH1F*)hs->GetStack()->Last();
-
+ TH1F *Stackhist = (TH1F*)hs->GetStack()->Last(); 
+ 
 hasNoEvents=false;
 float maxi = Stackhist->GetMaximum();
 cout << to_string(maxi) << endl;
@@ -789,7 +638,7 @@ if (Stackhist->GetEntries()==0){
     empfile << "HISTNAME" <<endl;
     empfile.close();
 }
-
+ 
  TH1F* h_err;
  h_err = (TH1F*) h_data->Clone("h_err");
  h_err = (TH1F*) h_mc[0]->Clone("h_err");
@@ -799,7 +648,7 @@ if (Stackhist->GetEntries()==0){
  for (int imc=1; imc<46; imc++) {
     h_err->Add(h_mc[imc]);
  }
-
+ 
 // h_err->Add(h_mc[1]);
 // h_err->Add(h_mc[2]);
 // h_err->Add(h_mc[3]);
@@ -851,7 +700,7 @@ Stackhist->SetLineWidth(2);
 //   c12->SetLogy(b1);}
 //else{
 c12->SetLogy(ISLOG);
-
+   
 // Upper canvas declaration
 TPad *c1_2 = NULL;
  if(NORATIOPLOT){
@@ -861,63 +710,16 @@ TPad *c1_2 = NULL;
   else{
     c1_2 = new TPad("c1_2","newpad",0,0.28,1,1);
     }
-
+    
   c1_2->SetBottomMargin(0.03);
-  c1_2->SetTopMargin(0.06);
+  c1_2->SetTopMargin(0.06);  
   c1_2->SetLogy(ISLOG);
   if(VARIABLEBINS){ c1_2->SetLogx(0);}
   c1_2->Draw();
   c1_2->cd();
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Draw stack histogram
-//hs->GetYaxis()->SetLabelFont(42);
 
 hs->Draw();
-
-if (histnameString=="h_met_sr2_" && AddSig){
-//gStyle->SetLegendBorderSize(0);
-legend_sig->SetBorderSize(0);
-legend_zpsig->SetBorderSize(0);
-
-legend_sig->SetFillStyle(0);
-legend_zpsig->SetFillStyle(0);
-
-hs->SetMinimum(0.05);
-hs->Draw();
-std::cout << "Integral of h_sig1" << h_sig1->Integral() << std::endl;
-std::cout << "Integral of h_sig2" << h_sig2->Integral() << std::endl;
-std::cout << "Integral of h_sig3" << h_sig3->Integral() << std::endl;
-
-h_sig1->Draw("HIST same");
-h_sig2->Draw("HIST same");
-h_sig3->Draw("HIST same");
-h_zpsig1->Draw("HIST same");
-h_zpsig2->Draw("HIST same");
-legend_sig->Draw();
-legend_zpsig->Draw();
-}
-
-if (histnameString=="h_bb_Mass_sr2_" && AddSig){
-legend_zpsig_mass->SetBorderSize(0);
-legend_sig_mass->SetBorderSize(0);
-
-legend_zpsig_mass->SetFillStyle(0);
-legend_sig_mass->SetFillStyle(0);
-
-
-//hs->SetMinimum(0.05);
-//hs->Draw();
-hmbb_sig1->Draw("HIST same");
-hmbb_sig2->Draw("HIST same");
-hmbb_sig3->Draw("HIST same");
-hmbb_zpsig1->Draw("HIST same");
-hmbb_zpsig2->Draw("HIST same");
-legend_zpsig_mass->Draw();
-legend_sig_mass->Draw();
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 std::cout<<" PREFITDIR "<<std::endl;
@@ -942,7 +744,7 @@ h_prefit->SetFillColor(0);
 
 gStyle->SetHistTopMargin(0.);
 
-  TH1F *Stackhist1 = (TH1F*)hs->GetStack()->Last();
+  TH1F *Stackhist1 = (TH1F*)hs->GetStack()->Last(); 
   h_err->Draw("E2 SAME");
   h_err->Sumw2();
   h_err->SetFillColor(kGray+3);
@@ -951,10 +753,10 @@ gStyle->SetHistTopMargin(0.);
   h_err->SetFillStyle(3013);
 
   h_data->SetLineColor(1);
-
+ 
 //  if(!NORATIOPLOT){
 //  h_data->Draw("same p e1");
-//  }
+//  } 
   if(!NORATIOPLOT)
   {
       h_data->Draw("same p e1");
@@ -963,14 +765,14 @@ gStyle->SetHistTopMargin(0.);
  //     if(ISLOG==0) hs->SetMaximum(maxi *1.4);
   }
  // else   {
-
+ 
       if(ISLOG==1)    hs->SetMinimum(0.68);
       if(ISLOG==0)   hs->SetMaximum(maxi*1.35);
       if(ISLOG==0)   hs->SetMinimum(0.0001);
-
+      
       //if(!ISLOG)   hs->SetMaximum(maxi *1.70);
       //if(ISLOG)    hs->SetMaximum(maxi *5);
- // }
+ // } 
 
 
 
@@ -979,11 +781,11 @@ gStyle->SetHistTopMargin(0.);
   double binofwidth = h_mc[0]->GetBinWidth(1);
   TString binwidth_;
   binwidth_.Form("%1.1f",binofwidth);
-
-if (!hasNoEvents) {
+  
+if (!hasNoEvents) {  
 //hs->GetXaxis()->SetTickLength(0.07);
     hs->GetXaxis();
-   hs->GetXaxis()->SetNdivisions(508);
+   hs->GetXaxis()->SetNdivisions(508);        
   if(NORATIOPLOT){
     /*hs->GetXaxis()->SetTitleSize(0.03);
     hs->GetXaxis()->SetTitleOffset(1.05);
@@ -997,16 +799,16 @@ if (!hasNoEvents) {
     hs->GetYaxis()->SetLabelFont(42);
     hs->GetYaxis()->SetLabelSize(0.05);
     //hs->GetXaxis()->SetTitle("XAXISLABEL");*/
-
+    
     hs->GetXaxis()->SetTitle("XAXISLABEL");
   //  hs->GetXaxis()->SetTitleSize(0.8);
  //   hs->GetXaxis()->SetTitleOffset(0.9);
     hs->GetXaxis()->SetTitleFont(42);
     hs->GetXaxis()->SetLabelFont(42);
     hs->GetXaxis()->SetLabelOffset(.01);
-    hs->GetXaxis()->SetLabelSize(0.03);
+    hs->GetXaxis()->SetLabelSize(0.03); 
     hs->GetYaxis()->SetTitle("Events");
-    hs->GetYaxis()->SetTitleSize(0.05);
+    hs->GetYaxis()->SetTitleSize(0.05); 
   //  hs->GetYaxis()->SetTitleOffset(1);
     hs->GetYaxis()->SetTitleFont(42);
     hs->GetYaxis()->SetLabelFont(42);
@@ -1019,17 +821,17 @@ if (!hasNoEvents) {
     hs->GetXaxis()->SetTitleFont(42);
     hs->GetXaxis()->SetLabelFont(42);
     hs->GetXaxis()->SetLabelOffset(.01);
-    hs->GetXaxis()->SetLabelSize(0.04);
+    hs->GetXaxis()->SetLabelSize(0.04); 
     hs->GetYaxis()->SetTitle("Events");
-    hs->GetYaxis()->SetTitleSize(0.045);
+    hs->GetYaxis()->SetTitleSize(0.045); 
     hs->GetYaxis()->SetTitleOffset(1);
     hs->GetYaxis()->SetTitleFont(42);
     hs->GetYaxis()->SetLabelFont(42);
     hs->GetYaxis()->SetLabelSize(.03);
   }
-  hs->GetXaxis()->SetRangeUser(XMIN,XMAX);
-  hs->GetXaxis()->SetNdivisions(508);
-
+  hs->GetXaxis()->SetRangeUser(XMIN,XMAX); 
+  hs->GetXaxis()->SetNdivisions(508);        
+  
  // if(VARIABLEBINS){ hs->GetXaxis()->SetNdivisions(310);}
 
 
@@ -1038,9 +840,9 @@ if (!hasNoEvents) {
 //  legend->AddEntry(Stackhist,"Post-fit","l");
   //legend->AddEntry(ZJets,"Vh","f");
   legend->AddEntry(h_err,"Stat. Unc.","f");
+    
 
-
-
+ 
 
  //Legend
  TLegend *legendsig;
@@ -1053,7 +855,7 @@ if (!hasNoEvents) {
     legendsig = new TLegend(0.57, 0.5, 0.94,0.65,NULL,"brNDC");
     legendsig->SetTextSize(0.030);
  } */
-
+ 
  legendsig = new TLegend(0.57, 0.5, 0.94,0.65,NULL,"brNDC");
     legendsig->SetTextSize(0.030);
  legendsig->SetBorderSize(0);
@@ -1064,7 +866,7 @@ if (!hasNoEvents) {
  legendsig->SetFillStyle(0);
  legendsig->SetTextFont(42);
 
- legend->Draw("same");
+ legend->Draw("same"); 
  legendsig->Draw("same");
 
 //===========================Latex=================//
@@ -1073,7 +875,7 @@ TH1F *h_MC_all = new TH1F(*((TH1F *)(hs->GetStack()->Last())));  // To get all M
 
 //TString latexCMSname= "CMS #it{#bf{Preliminary}}";//"CMS";// #it{#bf{Preliminary}}";
 TString latexCMSname= "";
-TString latexPreCMSname= "#bf{CMS} #it{Preliminary}";
+//TString latexPreCMSname= "#bf{CMS} #it{Preliminary}";
 
 TString MC_count;
 TString data_count;
@@ -1096,10 +898,10 @@ if (QCDSF==1) {
 }
 
 //TString latexPreCMSname="#bf{CMS} #it{Preliminary}: "+MC_count+data_count+hasQSF;
-//TString latexPreCMSname="#bf{CMS} #it{Preliminary}: "+MC_count+data_count;
+TString latexPreCMSname="#bf{CMS} #it{Preliminary}: "+MC_count+data_count;
 
 TString latexnamemiddle;
-latexnamemiddle.Form("%1.1f fb^{-1}",luminosity);
+latexnamemiddle.Form("%1.1f fb^{-1}",luminosity); 
 TString latexnamepost = " (13 TeV)";
 //TString latexname = latexnamepre+latexnamemiddle+latexnamepost;
 TString latexname = latexnamemiddle+latexnamepost;
@@ -1129,11 +931,11 @@ t2a->SetTextSize(0.040);
  t2d->SetTextSize(0.036);
 
  }else{ */
-
+ 
  t2b = new TLatex(0.22,0.88,latexCMSname);
- t2b->SetTextSize(0.03);
+ t2b->SetTextSize(0.03); 
 
- t2d = new TLatex(0.40,0.9,histolabel);
+ t2d = new TLatex(0.46,0.9,histolabel);
  t2d->SetTextSize(0.045);
 
 // }
@@ -1159,7 +961,7 @@ t2a->SetTextSize(0.040);
   t2d->Draw("same");
 
 //====
-
+  
 
 // Commenting out the signal for control region
 //  h_mc[9]->Draw("hist same");
@@ -1170,8 +972,8 @@ t2a->SetTextSize(0.040);
 //  for (int imc=46;imc<84;imc++){
 //    h_mc[imc]->Draw("hist same");
 //  }
-
-
+  
+  
 //  h_data->Draw("same p e1");
 // for lower band stat and sys band
 
@@ -1184,7 +986,7 @@ ratiostaterr->SetMinimum(0);
 ratiostaterr->SetMarkerSize(0);
 ratiostaterr->SetFillColor(kBlack);
 ratiostaterr->SetFillStyle(3013);
-
+ 
 for(Int_t i = 0; i < h_err->GetNbinsX()+2; i++) {
    ratiostaterr->SetBinContent(i, 1.0);
 
@@ -1261,7 +1063,7 @@ TH1F *DataMCPre;
   DataMC    = (TH1F*) h_data->Clone();
   DataMCPre = (TH1F*) h_data->Clone();
   DataMC->Divide(Stackhist);
-
+  
 //  DataMCPre->Divide(h_prefit);
   DataMC->GetYaxis()->SetTitle("Data/Pred.");
   DataMC->GetYaxis()->SetTitleSize(0.1);
@@ -1277,8 +1079,8 @@ TH1F *DataMCPre;
   DataMC->GetXaxis()->SetTitleFont(42);
   DataMC->GetXaxis()->SetTickLength(0.07);
   DataMC->GetXaxis()->SetLabelFont(42);
-  DataMC->GetYaxis()->SetLabelFont(42);
-
+  DataMC->GetYaxis()->SetLabelFont(42);     
+  
 }
 
  TPad *c1_1 = new TPad("c1_1", "newpad",0,0.00,1,0.3);
@@ -1298,16 +1100,16 @@ TH1F *DataMCPre;
  c1_1->SetFrameFillStyle(0);
  c1_1->SetFrameBorderMode(0);
  c1_1->SetLogy(0);
+ 
 
-
-
+ 
 if(!NORATIOPLOT) {
     if(VARIABLEBINS){
         c1_1->SetLogx(0);
         DataMC->GetXaxis()->SetMoreLogLabels();
         DataMC->GetXaxis()->SetNoExponent();
         DataMC->GetXaxis()->SetNdivisions(508);
-    }
+    }     
     DataMC->GetXaxis()->SetRangeUser(XMIN,XMAX);
     DataMC->SetMarkerSize(0.7);
     DataMC->SetMarkerStyle(20);
@@ -1348,23 +1150,23 @@ ratioleg2->SetTextSize(0.09);
 ratioleg2->SetBorderSize(1);
 ratioleg2->SetNColumns(2);
 //ratioleg->SetTextSize(0.07);
-//ratioleg2->AddEntry(DataMCPre, "Pre-fit", "PEL");
+//ratioleg2->AddEntry(DataMCPre, "Pre-fit", "PEL");                                                                                    
 //ratioleg2->AddEntry(DataMC, "Post-fit", "PEL");
-ratioleg2->Draw("same");
+ratioleg2->Draw("same");                                                                                                                                                              
 */
 
+ 
 
-
-if(TEXTINFILE){
-
+if(TEXTINFILE){ 
+   
 //=======================================================================
   //Calculating the contribution of each background in particular range
  // As Data DY(ee) diboson TTjets WWJets
  TAxis *xaxis = h_mc[0]->GetXaxis();
  Int_t binxmin = xaxis->FindBin(XMIN);
  Int_t binxmax = xaxis->FindBin(XMAX);
-
-float dyjets = h_mc[3]->Integral()+h_mc[4]->Integral()+h_mc[5]->Integral()+h_mc[6]->Integral()+h_mc[7]->Integral()+h_mc[8]->Integral()+h_mc[9]->Integral()+h_mc[10]->Integral() ;
+      
+float dyjets = h_mc[3]->Integral()+h_mc[4]->Integral()+h_mc[5]->Integral()+h_mc[6]->Integral()+h_mc[7]->Integral()+h_mc[8]->Integral()+h_mc[9]->Integral()+h_mc[10]->Integral() ; 
 float dyjets_error = TMath::Sqrt( pow(Integral_Error[3],2) + pow(Integral_Error[4],2) + pow(Integral_Error[5],2) + pow(Integral_Error[6],2) + pow(Integral_Error[7],2) + pow(Integral_Error[8],2)+ pow(Integral_Error[9],2)+ pow(Integral_Error[10],2));
 
 float diboson_ = h_mc[0]->Integral() + h_mc[1]->Integral() + h_mc[2]->Integral();
@@ -1380,13 +1182,13 @@ float zjets = h_mc[3]->Integral()+h_mc[4]->Integral()+h_mc[5]->Integral()+h_mc[6
 float zjets_error = TMath::Sqrt(pow(Integral_Error[3],2) + pow( Integral_Error[4],2) + pow(Integral_Error[5],2) + pow(Integral_Error[6],2) + pow(Integral_Error[7],2) + pow(Integral_Error[8],2)+ pow(Integral_Error[9],2)+ pow(Integral_Error[10],2));
 
 
-  mout << "HISTPATH"            <<  " a b"<<std::endl;
-  mout << " DATA "    << h_data->Integral()  <<" 0"<< std::endl;
+  mout << "HISTPATH"            <<  " a b"<<std::endl; 
+  mout << " DATA "    << h_data->Integral()  <<" 0"<< std::endl; 
   mout << " DIBOSON "   << diboson_                  <<" "<<diboson_error << std::endl;
-  mout << " SingleT "      << st_ <<" "<<st_error <<  std::endl;
+  mout << " SingleT "      << st_ <<" "<<st_error <<  std::endl; 
   mout << " WJETS "    << wjets<< " "<<wjets_error<<std::endl;
   mout << " ZJETS "      << zjets <<" "<<zjets_error<< std::endl;
-  mout << " DYJETS "   <<dyjets <<" "<<dyjets_error <<std::endl;
+  mout << " DYJETS "   <<dyjets <<" "<<dyjets_error <<std::endl;  
  /* mout << " M600 "    << h_mc[7]->Integral() <<" "<<Integral_Error[7]<< std::endl;
   mout << " M800 "    << h_mc[8]->Integral() <<" "<<Integral_Error[8]<< std::endl;
   mout << " M1000 "    << h_mc[9]->Integral() <<" "<<Integral_Error[9]<< std::endl;
@@ -1403,12 +1205,12 @@ float zjets_error = TMath::Sqrt(pow(Integral_Error[3],2) + pow( Integral_Error[4
 /*
 if(VARIABLEBINS){
 //  metbinsout_2.precision(3);
-//metbinsout_2 << " DATA "        << h_data->GetBinContent(2)   <<" 0"<< std::endl;
+//metbinsout_2 << " DATA "        << h_data->GetBinContent(2)   <<" 0"<< std::endl; 
   metbinsout_2 << " DIBOSON "     << DIBOSON->GetBinContent(2)  <<" "<<DIBOSON->GetBinError(2)<< std::endl;
-  metbinsout_2 << " SingleT "     << STop->GetBinContent(2)       <<" "<<STop->GetBinError(2)     <<  std::endl;
+  metbinsout_2 << " SingleT "     << STop->GetBinContent(2)       <<" "<<STop->GetBinError(2)     <<  std::endl; 
   metbinsout_2 << " WJETS "       << WJets->GetBinContent(2)    <<" "<<WJets->GetBinError(2)  <<std::endl;
   metbinsout_2 << " ZJETS "       << ZJets->GetBinContent(2)       <<" "<<ZJets->GetBinError(2)     << std::endl;
-  metbinsout_2 << " DYJETS "      <<DYJets->GetBinContent(2)    <<" "<<DYJets->GetBinError(2) <<std::endl;
+  metbinsout_2 << " DYJETS "      <<DYJets->GetBinContent(2)    <<" "<<DYJets->GetBinError(2) <<std::endl;  
   metbinsout_2 << " M600 "    << h_mc[7]->GetBinContent(2)  <<" "<<h_mc[7]->GetBinError(2)<< std::endl;
   metbinsout_2 << " M800 "    << h_mc[8]->GetBinContent(2)  <<" "<<h_mc[8]->GetBinError(2)<< std::endl;
   metbinsout_2 << " M1000 "   << h_mc[9]->GetBinContent(2)  <<" "<<h_mc[9]->GetBinError(2)<< std::endl;
@@ -1423,12 +1225,12 @@ if(VARIABLEBINS){
 
 if(VARIABLEBINS){
   //metbinsout_3.precision(3);
-//  metbinsout_3 << " DATA "    << h_data->GetBinContent(3)   <<" 0"<< std::endl;
+//  metbinsout_3 << " DATA "    << h_data->GetBinContent(3)   <<" 0"<< std::endl; 
   metbinsout_3 << " DIBOSON " << DIBOSON->GetBinContent(3)  <<" "<<DIBOSON->GetBinError(3)<< std::endl;
-  metbinsout_3 << " SingleT "      << STop->GetBinContent(3)       <<" "<<STop->GetBinError(3)     <<  std::endl;
+  metbinsout_3 << " SingleT "      << STop->GetBinContent(3)       <<" "<<STop->GetBinError(3)     <<  std::endl; 
   metbinsout_3 << " WJETS "   << WJets->GetBinContent(3)    <<" "<<WJets->GetBinError(3)  <<std::endl;
   metbinsout_3 << " ZJETS "      << ZJets->GetBinContent(3)       <<" "<<ZJets->GetBinError(3)     << std::endl;
-  metbinsout_3 << " DYJETS "  <<DYJets->GetBinContent(3)    <<" "<<DYJets->GetBinError(3) <<std::endl;
+  metbinsout_3 << " DYJETS "  <<DYJets->GetBinContent(3)    <<" "<<DYJets->GetBinError(3) <<std::endl;  
   metbinsout_3 << " M600 "    << h_mc[7]->GetBinContent(3)  <<" "<<h_mc[7]->GetBinError(3)<< std::endl;
   metbinsout_3 << " M800 "    << h_mc[8]->GetBinContent(3)  <<" "<<h_mc[8]->GetBinError(3)<< std::endl;
   metbinsout_3 << " M1000 "   << h_mc[9]->GetBinContent(3)  <<" "<<h_mc[9]->GetBinError(3)<< std::endl;
@@ -1443,12 +1245,12 @@ if(VARIABLEBINS){
 
 if(VARIABLEBINS){
  // metbinsout_1.precision(3);
-//  metbinsout_1 << " DATA "    << h_data->GetBinContent(1)   <<" 0"<< std::endl;
+//  metbinsout_1 << " DATA "    << h_data->GetBinContent(1)   <<" 0"<< std::endl; 
   metbinsout_1 << " DIBOSON " << DIBOSON->GetBinContent(1)  <<" "<<DIBOSON->GetBinError(1)<< std::endl;
-  metbinsout_1 << " SingleT "      << STop->GetBinContent(1)       <<" "<<STop->GetBinError(1)     <<  std::endl;
+  metbinsout_1 << " SingleT "      << STop->GetBinContent(1)       <<" "<<STop->GetBinError(1)     <<  std::endl; 
   metbinsout_1 << " WJETS "   << WJets->GetBinContent(1)    <<" "<<WJets->GetBinError(1)  <<std::endl;
   metbinsout_1 << " ZJETS "      << ZJets->GetBinContent(1)       <<" "<<ZJets->GetBinError(1)     << std::endl;
-  metbinsout_1 << " DYJETS "  <<DYJets->GetBinContent(1)    <<" "<<DYJets->GetBinError(1) <<std::endl;
+  metbinsout_1 << " DYJETS "  <<DYJets->GetBinContent(1)    <<" "<<DYJets->GetBinError(1) <<std::endl;  
   metbinsout_1 << " M600 "    << h_mc[7]->GetBinContent(1)  <<" "<<h_mc[7]->GetBinError(1)<< std::endl;
   metbinsout_1 << " M800 "    << h_mc[8]->GetBinContent(1)  <<" "<<h_mc[8]->GetBinError(1)<< std::endl;
   metbinsout_1 << " M1000 "   << h_mc[9]->GetBinContent(1)  <<" "<<h_mc[9]->GetBinError(1)<< std::endl;
@@ -1457,7 +1259,7 @@ if(VARIABLEBINS){
   metbinsout_1 << " M1700 "   << h_mc[12]->GetBinContent(1) <<" "<<h_mc[12]->GetBinError(1)<< std::endl;
   metbinsout_1 << " M2000 "   << h_mc[13]->GetBinContent(1) <<" "<<h_mc[13]->GetBinError(1)<< std::endl;
   metbinsout_1 << " M2500 "   << h_mc[14]->GetBinContent(1) <<" "<<h_mc[14]->GetBinError(1)<< std::endl;
-
+ 
  mout << "========= ======================== =====================" <<std::endl;
 }
 */
@@ -1468,7 +1270,7 @@ if(VARIABLEBINS){
   tableout.precision(3);
   tableout << " Z \\\\rightarrow \\\\nu \\\\nu+Jets & "<< dyjets <<" \\\\pm "<<dyjets_error <<"\\\\\\\\"<<std::endl;
   tableout << " Z \\\\rightarrow ll + Jets & "<< zjets <<" \\\\pm "<<zjets_error <<"\\\\\\\\"<<std::endl;
-  tableout << " st  & "<< st_ <<" \\\\pm "<<st_error <<"\\\\\\\\"<< std::endl;
+  tableout << " st  & "<< st_ <<" \\\\pm "<<st_error <<"\\\\\\\\"<< std::endl; 
   tableout << " W+Jets & "  <<wjets <<" \\\\pm "<<wjets_error <<"\\\\\\\\"<< std::endl;
   tableout << " WW/WZ/ZZ & " << diboson_ <<" \\\\pm "<<diboson_error  <<"\\\\\\\\"<< std::endl;
 /*  tableout << " M600  & "    << h_mc[7]->Integral() <<" \\\\pm "<<Integral_Error[7]<<"\\\\\\\\"<< std::endl;
@@ -1479,7 +1281,7 @@ if(VARIABLEBINS){
   tableout << " M1700 &  "   << h_mc[12]->Integral() <<" \\\\pm "<<Integral_Error[12]<<"\\\\\\\\"<< std::endl;
   tableout << " M2000 &  "   << h_mc[13]->Integral() <<" \\\\pm "<<Integral_Error[13]<<"\\\\\\\\"<< std::endl;
   tableout << " M2500 &  "   << h_mc[14]->Integral() <<" \\\\pm "<<Integral_Error[14]<<"\\\\\\\\"<< std::endl;*/
-  tableout << " DATA  & "    << h_data->Integral()  << std::endl;
+  tableout << " DATA  & "    << h_data->Integral()  << std::endl; 
 
 
 float a = wjets;
@@ -1493,22 +1295,22 @@ tableout<< " "<<std::endl;
 }
 // c1_1->Draw();
  c12->Draw();
-
+ 
 if(ISLOG==0){
  c12->SaveAs(DirPreName+dirpathname +"/bbMETPdf/HISTPATH.pdf");
  c12->SaveAs(DirPreName+dirpathname +"/bbMETPng/HISTPATH.png");
 // cout << "Saved." << endl;
-// c12->SaveAs(DirPreName+dirpathname +"/bbMETROOT/HISTPATH.root");
+// c12->SaveAs(DirPreName+dirpathname +"/bbMETROOT/HISTPATH.root");                                                                         
  rout<<"<hr/>"<<std::endl;
  rout<<"<table class=\\"\\"> <tr><td><img src=\\""<<"DYPng/HISTPATH.png\\" height=\\"400\\" width=\\"400\\"></td>   </tr> </table>"<<std::endl;
 
 }
-
+ 
 if(ISLOG==1){
  c12->SaveAs(DirPreName+dirpathname +"/bbMETPdf/HISTPATH_log.pdf");
  c12->SaveAs(DirPreName+dirpathname +"/bbMETPng/HISTPATH_log.png");
  cout << "Saved." << endl;
-// c12->SaveAs(DirPreName+dirpathname +"/bbMETROOT/HISTPATH_log.root");
+// c12->SaveAs(DirPreName+dirpathname +"/bbMETROOT/HISTPATH_log.root");                                                                        
 }
 
 fshape->cd();
@@ -1517,16 +1319,16 @@ Stackhist->SetNameTitle("bkgSum","bkgSum");
 Stackhist->Write();
 
 /*
-monoHbbM600->SetNameTitle("monoHbbM600","monoHbbM600");
+monoHbbM600->SetNameTitle("monoHbbM600","monoHbbM600"); 
 monoHbbM600->Write();
 monoHbbM800->SetNameTitle("monoHbbM800","monoHbbM800");
-monoHbbM800->Write();
+monoHbbM800->Write(); 
 monoHbbM1000->SetNameTitle("monoHbbM1000","monoHbbM1000");
 monoHbbM1000->Write();
 monoHbbM1200->SetNameTitle("monoHbbM1200","monoHbbM1200");
 monoHbbM1200->Write();
 monoHbbM1400->SetNameTitle("monoHbbM1400","monoHbbM1400");
-monoHbbM1400->Write();
+monoHbbM1400->Write(); 
 monoHbbM1700->SetNameTitle("monoHbbM1700","monoHbbM1700");
 monoHbbM1700->Write();
 monoHbbM2000->SetNameTitle("monoHbbM2000","monoHbbM2000");
@@ -1549,7 +1351,7 @@ TT->Write();
 WJets->SetNameTitle("WJets","WJets");
 WJets->Write();
 DYJets->SetNameTitle("DYJets","DYJets");
-DYJets->Write();
+DYJets->Write(); 
 data_obs->SetNameTitle("data_obs","data_obs");
 data_obs->Write();
 fshape->Write();
@@ -1572,7 +1374,7 @@ TemplateOverlapMacro.close()
 
 def makeplot(inputs):
     print inputs
-
+    
     QCDSF=1
     if not 'QCD' in inputs[1]:
         if '1b' in inputs[1] or 'sr1' in inputs[1].lower():
@@ -1580,7 +1382,7 @@ def makeplot(inputs):
         elif '2b' in inputs[1] or 'sr2' in inputs[1].lower():
             QCDSF=0.9458
     print QCDSF
-
+    
     TemplateOverlapMacro = open('TemplateOverlapMacro.C','r')
     NewPlot       = open('Plot.C','w')
     for line in TemplateOverlapMacro:
@@ -1589,36 +1391,36 @@ def makeplot(inputs):
         line = line.replace("XAXISLABEL",inputs[2])
         line = line.replace("XMIN",inputs[3])
         line = line.replace("XMAX",inputs[4])
-        line = line.replace("REBIN",inputs[5])
+        line = line.replace("REBIN",inputs[5]) 
         line = line.replace("ISLOG",inputs[6])
-
+        
         line = line.replace("QCDSF",str(QCDSF))
         line = line.replace("VERBOSE",str(int(verbose)))
-
+        
         HistName=inputs[1]
         if 'h_reg_' in HistName:
             histolabel=HistName.split('_')[2]
         elif '_sr1' in HistName:
             histolabel="SR1"
         elif '_sr2' in HistName:
-            histolabel="#splitline{monoHbb}{resolved}"
+            histolabel="SR2"
         else:
             histolabel=""
-
+            
         line = line.replace("HISTOLABEL",histolabel)
-
-
-        if len(inputs) > 7 :
+            
+        
+        if len(inputs) > 7 : 
             line = line.replace("ISCUTFLOW", inputs[7])
-        else :
-            line = line.replace("ISCUTFLOW", "0")
-
-        if len(inputs) > 8 :
+        else : 
+            line = line.replace("ISCUTFLOW", "0")  
+            
+        if len(inputs) > 8 : 
             line = line.replace("BLINDFACTOR", inputs[8])
-        else :
-            line = line.replace("BLINDFACTOR", "1")
-
-
+        else : 
+            line = line.replace("BLINDFACTOR", "1")  
+            
+        
         if len(inputs) > 9 :
             line = line.replace("NORATIOPLOT", inputs[9])
         else :
@@ -1627,10 +1429,10 @@ def makeplot(inputs):
             line = line.replace("VARIABLEBINS", inputs[10])
         else:
             line = line.replace("VARIABLEBINS", "0")
-        if len(inputs) > 11 :
+        if len(inputs) > 11 : 
             line = line.replace("TEXTINFILE", inputs[11])
-        else :
-            line = line.replace("TEXTINFILE", "0")
+        else : 
+            line = line.replace("TEXTINFILE", "0")     
         if len(inputs) > 12 :
             line = line.replace(".pdf",str(inputs[12]+".pdf"))
             line = line.replace(".png",str(inputs[12]+".png"))
@@ -1657,153 +1459,151 @@ srblindfactor='1'
 srnodata='1'
 
 for dirname in dirnames:
-
+    
     regions=[]
     PUreg=[]
-
+    
 #    if makeMuCRplots and makeEleCRplots:
 #        regions=['2e1b','2mu1b','2e2b','2mu2b','1e1b','1mu1b','1e2b','1mu2b','1mu1e1b','1mu1e2b']
     if makeMuCRplots:
-        regions+=['2mu2b','1mu2bT']#,'1mu2bW','1mu2bW_noMassCut','1mu2bW_nobtag','1mu2bW_noMassAndbtag']
+        #regions+=['2mu1b','2mu2b','1mu1b','1mu2b','1mu1e1b','1mu1e2b']
+        regions+=['2mu2b','1mu2b','1mu1e2b']
         PUreg+=['mu_']
     if makeEleCRplots:
-        regions+=['2e2b','1e2bT']#,'1e2bW','1e2bW_noMassCut','1e2bW_nobtag','1e2bW_noMassAndbtag']
+        #regions+=['2e1b','2e2b','1e1b','1e2b']
+        regions+=['2e2b','1e2b']
         PUreg+=['ele_']
     if makePhoCRplots:
+        #regions+=['1gamma1b','1gamma2b']
         regions+=['1gamma2b']
         PUreg+=['pho_']
     if makeQCDCRplots:
+        #regions+=['QCD1b','QCD2b']
         regions+=['QCD2b']
         PUreg+=[]
 #    else:
 #        regions=[]
 #        PUreg=[]
-
+    
     makeplot([dirname+"CRSum",'h_CRSum_','','0.','10.','1','1'])
     if makeMuCRplots: makeplot([dirname+"CRSumMu",'h_CRSumMu_','','0.','6.','1','1'])
     if makeEleCRplots: makeplot([dirname+"CRSumEle",'h_CRSumEle_','','0.','4.','1','1'])
-
-    for dt in PUreg:
-        makeplot([dirname+dt+"PuReweightPV",'h_'+dt+'PuReweightPV_','nPV after PU reweighting','0.','50.','1','0'])
-        makeplot([dirname+dt+"noPuReweightPV",'h_'+dt+'noPuReweightPV_','nPV before PU reweighting','0.','50.','1','0'])
+    
+    #for dt in PUreg:
+        #makeplot([dirname+dt+"PuReweightPV",'h_'+dt+'PuReweightPV_','nPV after PU reweighting','0.','50.','1','0'])
+        #makeplot([dirname+dt+"noPuReweightPV",'h_'+dt+'noPuReweightPV_','nPV before PU reweighting','0.','50.','1','0'])
 #        makeplot([dirname+dt+"PuReweightnPVert",'h_'+dt+'PuReweightnPVert_','nPV after PU reweighting (nPVert): '+dt,'0.','100.','100','0'])
 #        makeplot([dirname+dt+"noPuReweightnPVert",'h_'+dt+'noPuReweightnPVert_','nPV before PU reweighting (nPVert): '+dt,'0.','100.','100','0'])
 
 # Cutflow plots:
-    # if makeSRplots:
-    #     makeplot([dirname+"cutflow",'h_cutflow_','Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
-    #     makeplot([dirname+"cutflow_SR1",'h_cutflow_SR1_','SR1 Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
-    #     makeplot([dirname+"cutflow_SR2",'h_cutflow_SR2_','SR2 Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
-    #
-    # for reg in regions:
-    #     makeplot([dirname+"cutflow_"+reg,'h_cutflow_'+reg+'_',reg+' Cutflow','0.','13','1','1','1'])
-
+    if makeSRplots:
+        #makeplot([dirname+"cutflow",'h_cutflow_','Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
+        #makeplot([dirname+"cutflow_SR1",'h_cutflow_SR1_','SR1 Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
+        makeplot([dirname+"cutflow_SR2",'h_cutflow_SR2_','SR2 Cutflow','0.','10','1','1','1',srblindfactor,srnodata])
+    
+    for reg in regions:
+        makeplot([dirname+"cutflow_"+reg,'h_cutflow_'+reg+'_',reg+' Cutflow','0.','13','1','1','1'])
+        
 #Linear plots:
     if makeSRplots:
-        makeplot([dirname+"bb_Mass_sr2",'h_bb_Mass_sr2_','M(bb)','0.','250.','6','0','0',srblindfactor,srnodata])
-	makeplot([dirname+"MT_sr2",'h_MT_sr2_','MT(h,MET)','0.','250.','6','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet1_eta_sr1",'h_jet1_eta_sr1_','jet 1 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet2_eta_sr1",'h_jet2_eta_sr1_','jet 2 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
-        #
-        # makeplot([dirname+"jet1_eta_sr2",'h_jet1_eta_sr2_','jet 1 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet2_eta_sr2",'h_jet2_eta_sr2_','jet 2 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet3_eta_sr2",'h_jet3_eta_sr2_','jet 3 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
-        #
-        # makeplot([dirname+"jet1_csv_sr1",'h_jet1_csv_sr1_','jet 1 csv','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet2_csv_sr1",'h_jet2_csv_sr1_','jet 2 csv','0.','1.','1','0','0',srblindfactor,srnodata])
-        #
-        # makeplot([dirname+"jet1_deepcsv_sr1",'h_jet1_deepcsv_sr1_','jet 1 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet2_deepcsv_sr1",'h_jet2_deepcsv_sr1_','jet 2 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
-        #
-        # #makeplot([dirname+"presel_jet1_csv_sr1",'h_presel_jet1_csv_sr1_','jet 1 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        # #makeplot([dirname+"presel_jet2_csv_sr1",'h_presel_jet2_csv_sr1_','jet 2 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        #
-        # makeplot([dirname+"jet1_csv_sr2",'h_jet1_csv_sr2_','jet 1 csv','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet2_csv_sr2",'h_jet2_csv_sr2_','jet 2 csv','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet3_csv_sr2",'h_jet3_csv_sr2_','jet 3 csv','0.','1.','1','0','0',srblindfactor,srnodata])
-        #
-        # makeplot([dirname+"jet1_deepcsv_sr2",'h_jet1_deepcsv_sr2_','jet 1 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet2_deepcsv_sr2",'h_jet2_deepcsv_sr2_','jet 2 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet3_deepcsv_sr2",'h_jet3_deepcsv_sr2_','jet 3 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
-        #
-        # #makeplot([dirname+"presel_jet1_csv_sr2",'h_presel_jet1_csv_sr2_','jet 1 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        # #makeplot([dirname+"presel_jet2_csv_sr2",'h_presel_jet2_csv_sr2_','jet 2 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        # #makeplot([dirname+"presel_jet3_csv_sr2",'h_presel_jet3_csv_sr2_','jet 3 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        #
-        # #makeplot([dirname+"presel_jet1_chf_sr1",'h_presel_jet1_chf_sr1_','jet 1 CHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        # #makeplot([dirname+"presel_jet1_chf_sr2",'h_presel_jet1_chf_sr2_','jet 1 CHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        # #makeplot([dirname+"presel_jet1_nhf_sr1",'h_presel_jet1_nhf_sr1_','jet 1 NHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        # #makeplot([dirname+"presel_jet1_nhf_sr2",'h_presel_jet1_nhf_sr2_','jet 1 NHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
-        #
-        # makeplot([dirname+"jet1_chf_sr1",'h_jet1_chf_sr1_','jet 1 CHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet1_chf_sr2",'h_jet1_chf_sr2_','jet 1 CHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet1_nhf_sr1",'h_jet1_nhf_sr1_','jet 1 NHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet1_nhf_sr2",'h_jet1_nhf_sr2_','jet 1 NHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_eta_sr1",'h_jet1_eta_sr1_','jet 1 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_eta_sr1",'h_jet2_eta_sr1_','jet 2 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
+
+        makeplot([dirname+"jet1_eta_sr2",'h_jet1_eta_sr2_','jet 1 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
+        makeplot([dirname+"jet2_eta_sr2",'h_jet2_eta_sr2_','jet 2 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
+        makeplot([dirname+"jet3_eta_sr2",'h_jet3_eta_sr2_','jet 3 #eta','-3.','3.','1','0','0',srblindfactor,srnodata])
+
+        #makeplot([dirname+"jet1_csv_sr1",'h_jet1_csv_sr1_','jet 1 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_csv_sr1",'h_jet2_csv_sr1_','jet 2 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        
+        #makeplot([dirname+"jet1_deepcsv_sr1",'h_jet1_deepcsv_sr1_','jet 1 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_deepcsv_sr1",'h_jet2_deepcsv_sr1_','jet 2 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+
+        #makeplot([dirname+"presel_jet1_csv_sr1",'h_presel_jet1_csv_sr1_','jet 1 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"presel_jet2_csv_sr1",'h_presel_jet2_csv_sr1_','jet 2 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+
+        #makeplot([dirname+"jet1_csv_sr2",'h_jet1_csv_sr2_','jet 1 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_csv_sr2",'h_jet2_csv_sr2_','jet 2 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet3_csv_sr2",'h_jet3_csv_sr2_','jet 3 csv','0.','1.','1','0','0',srblindfactor,srnodata])
+        
+        #makeplot([dirname+"jet1_deepcsv_sr2",'h_jet1_deepcsv_sr2_','jet 1 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_deepcsv_sr2",'h_jet2_deepcsv_sr2_','jet 2 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet3_deepcsv_sr2",'h_jet3_deepcsv_sr2_','jet 3 deepcsv','0.','1.','1','0','0',srblindfactor,srnodata])
+
+        #makeplot([dirname+"presel_jet1_csv_sr2",'h_presel_jet1_csv_sr2_','jet 1 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"presel_jet2_csv_sr2",'h_presel_jet2_csv_sr2_','jet 2 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"presel_jet3_csv_sr2",'h_presel_jet3_csv_sr2_','jet 3 csv before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+
+        #makeplot([dirname+"presel_jet1_chf_sr1",'h_presel_jet1_chf_sr1_','jet 1 CHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"presel_jet1_chf_sr2",'h_presel_jet1_chf_sr2_','jet 1 CHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"presel_jet1_nhf_sr1",'h_presel_jet1_nhf_sr1_','jet 1 NHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"presel_jet1_nhf_sr2",'h_presel_jet1_nhf_sr2_','jet 1 NHadFrac before selection','0.','1.','1','0','0',srblindfactor,srnodata])
+
+        #makeplot([dirname+"jet1_chf_sr1",'h_jet1_chf_sr1_','jet 1 CHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_chf_sr2",'h_jet1_chf_sr2_','jet 1 CHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_nhf_sr1",'h_jet1_nhf_sr1_','jet 1 NHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet1_nhf_sr2",'h_jet1_nhf_sr2_','jet 1 NHadFrac','0.','1.','1','0','0',srblindfactor,srnodata])
 
     ##for CRs
     for reg in regions:
-	if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_Zmass",'h_reg_'+reg+'_Zmass_','Z candidate mass (GeV)','70.','110.','1','0'])
-        #if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_Zmass",'h_reg_'+reg+'_Zmass_','Z candidate mass (GeV)','70.','110.',reg[-2],'0'])
+        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_Zmass",'h_reg_'+reg+'_Zmass_','Z candidate mass (GeV)','70.','110.','6','0'])          
         if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_Wmass",'h_reg_'+reg+'_Wmass_','W candidate m_{T} (GeV)','40.','170.','1','0'])
         makeplot([dirname+"reg_"+reg+"_jet1_eta",'h_reg_'+reg+'_jet1_eta_','Lead Jet #eta','-3.5','3.5','1','0'])
         makeplot([dirname+"reg_"+reg+"_jet2_eta",'h_reg_'+reg+'_jet2_eta_','Second Jet #eta','-3.5','3.5','1','0'])
-
+        
         makeplot([dirname+"reg_"+reg+"_jet1_deepcsv",'h_reg_'+reg+'_jet1_deepcsv_','Lead Jet deepCSV','0.','1.','1','0'])
         makeplot([dirname+"reg_"+reg+"_jet1_csv",'h_reg_'+reg+'_jet1_csv_','Lead Jet CSV','0.','1.','1','0'])
 #        makeplot([dirname+"reg_"+reg+"_jet2_csv",'h_reg_'+reg+'_jet2_csv_','Second Jet CSV','0.','1.','1','0'])
-
-
+          
+        
 #Log plots:
-
+    
 ###For SR
     if makeSRplots:
-        # makeplot([dirname+"jet1_pT_sr1",'h_jet1_pT_sr1_','jet 1 p_{T} (GeV)','0.','800.','1','1','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet2_pT_sr1",'h_jet2_pT_sr1_','jet 2 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
-        #
-        #
-        # makeplot([dirname+"jet1_pT_sr2",'h_jet1_pT_sr2_','jet 1 p_{T} (GeV)','0.','800.','1','1','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet2_pT_sr2",'h_jet2_pT_sr2_','jet 2 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
-        # makeplot([dirname+"jet3_pT_sr2",'h_jet3_pT_sr2_','jet 3 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
-        #
-        # makeplot([dirname+"min_dPhi_sr1",'h_min_dPhi_sr1_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
-        # makeplot([dirname+"min_dPhi_sr2",'h_min_dPhi_sr2_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
-        #
-        # makeplot([dirname+"met_sr1",'h_met_sr1_','Missing Transverse Energy (GeV)','200.','1000','1','1','0',srblindfactor,srnodata])
-        makeplot([dirname+"met_sr2",'h_met_sr2_','Missing Transverse Energy (GeV)','200.','1000','1','1','0',srblindfactor,srnodata])
-
+        #makeplot([dirname+"jet1_pT_sr1",'h_jet1_pT_sr1_','jet 1 p_{T} (GeV)','0.','800.','1','1','0',srblindfactor,srnodata])
+        #makeplot([dirname+"jet2_pT_sr1",'h_jet2_pT_sr1_','jet 2 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
+        
+        
+        makeplot([dirname+"jet1_pT_sr2",'h_jet1_pT_sr2_','jet 1 p_{T} (GeV)','0.','800.','1','1','0',srblindfactor,srnodata])
+        makeplot([dirname+"jet2_pT_sr2",'h_jet2_pT_sr2_','jet 2 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
+        makeplot([dirname+"jet3_pT_sr2",'h_jet3_pT_sr2_','jet 3 p_{T} (GeV)','0.','400.','1','1','0',srblindfactor,srnodata])
+        
+        #makeplot([dirname+"min_dPhi_sr1",'h_min_dPhi_sr1_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
+        makeplot([dirname+"min_dPhi_sr2",'h_min_dPhi_sr2_','min #Delta #phi','0.','3.2','1','1','0',srblindfactor,srnodata])
+        
+        #makeplot([dirname+"met_sr1",'h_met_sr1_','Missing Transverse Energy (GeV)','200.','1000','2','1','0',srblindfactor,srnodata])
+        makeplot([dirname+"met_sr2",'h_met_sr2_','Missing Transverse Energy (GeV)','200.','1000','2','1','0',srblindfactor,srnodata])
+    
     # Region based
     for reg in regions:
-	if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.','1','1'])
-        #if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.',reg[-2],'1'])
-        if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_WpT",'h_reg_'+reg+'_WpT_','W candidate p_{T} (GeV)','0.','800.','1','1'])
+        if reg[0]=='2': makeplot([dirname+"reg_"+reg+"_ZpT",'h_reg_'+reg+'_ZpT_','Z candidate p_{T} (GeV)','0.','800.','10','1'])
+        if reg[0]=='1': makeplot([dirname+"reg_"+reg+"_WpT",'h_reg_'+reg+'_WpT_','W candidate p_{T} (GeV)','0.','800.','2','1'])
         makeplot([dirname+"reg_"+reg+"_hadrecoil",'h_reg_'+reg+'_hadrecoil_','Hadronic Recoil (GeV)','200.','1000.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_bb_Mass",'h_reg_'+reg+'_bb_Mass_','M(bb)','0.','250.','1','0'])
-	Hmakeplot([dirname+"reg_"+reg+"_MT",'h_reg_'+reg+'_MT_','MT(h,MET)','0.','250.','1','0'])
-
+        
         makeplot([dirname+"reg_"+reg+"_jet1_NHadEF",'h_reg_'+reg+'_jet1_NHadEF_','Lead jet neutral hadronic fraction','0.','1.','1','1'])
         makeplot([dirname+"reg_"+reg+"_jet1_CHadEF",'h_reg_'+reg+'_jet1_CHadEF_','Lead jet charged hadronic fraction','0.','1.','1','1'])
         makeplot([dirname+"reg_"+reg+"_jet1_CEmEF",'h_reg_'+reg+'_jet1_CEmEF_','Lead jet charged EM fraction','0.','1.','1','1'])
         makeplot([dirname+"reg_"+reg+"_jet1_PhoEF",'h_reg_'+reg+'_jet1_PhoEF_','Lead jet Photon fraction','0.','1.','1','1'])
         makeplot([dirname+"reg_"+reg+"_jet1_EleEF",'h_reg_'+reg+'_jet1_EleEF_','Lead jet Electron fraction','0.','1.','1','1'])
         makeplot([dirname+"reg_"+reg+"_jet1_MuoEF",'h_reg_'+reg+'_jet1_MuoEF_','Lead jet Muon fraction','0.','1.','1','1'])
-
+       
         if not 'QCD' in reg:
-            makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','0.','400.','1','1'])
+            makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','0.','400.','4','1'])
         else:
-            makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','200.','800.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_njet",'h_reg_'+reg+'_njet_','Number of Jets','-1','10','1','1'])
-
+            makeplot([dirname+"reg_"+reg+"_MET",'h_reg_'+reg+'_MET_','Real MET (GeV)','200.','800.','10','1'])
+        makeplot([dirname+"reg_"+reg+"_njet",'h_reg_'+reg+'_njet_','Number of Jets','-1','5','1','1'])
+       
         if reg[:2]=='1e':
             makeplot([dirname+"reg_"+reg+"_njet_n_minus_1",'h_reg_'+reg+'_njet_n_minus_1_','Number of Jets (n-1 cuts plot)','-1','12','1','1'])
             makeplot([dirname+"reg_"+reg+"_unclean_njet_n_minus_1",'h_reg_'+reg+'_unclean_njet_n_minus_1_','Number of Jets without cleaning (n-1 cuts plot)','-1','12','1','1'])
-
+    
             makeplot([dirname+"reg_"+reg+"_min_dR_jet_ele_preclean",'h_reg_'+reg+'_min_dR_jet_ele_preclean_','min dR between jets and electron before jet cleaning','0.','6.','1','1'])
             makeplot([dirname+"reg_"+reg+"_min_dR_jet_ele_postclean",'h_reg_'+reg+'_min_dR_jet_ele_postclean_','min dR between jets and electron after jet cleaning','0.','6.','1','1'])
         makeplot([dirname+"reg_"+reg+"_min_dPhi_jet_Recoil",'h_reg_'+reg+'_min_dPhi_jet_Recoil_','min d #phi between jets and recoil','0.','6.','1','1'])
         makeplot([dirname+"reg_"+reg+"_min_dPhi_jet_MET",'h_reg_'+reg+'_min_dPhi_jet_MET_','min d #phi between jets and real MET','0.','6.','1','1'])
-
+       
         makeplot([dirname+"reg_"+reg+"_min_dPhi_jet_Recoil_n_minus_1",'h_reg_'+reg+'_min_dPhi_jet_Recoil_n_minus_1_','min d #phi between jets and recoil before d#phi cut','0.','6.','1','1'])
-	makeplot([dirname+"reg_"+reg+"_nca15jet",'h_reg_'+reg+'_nca15jet_','Number of CA15Jet','-1','4','1','1']) #nca15jet
+       
         makeplot([dirname+"reg_"+reg+"_ntau",'h_reg_'+reg+'_ntau_','Number of Taus','-1','4','1','1'])
         makeplot([dirname+"reg_"+reg+"_nUncleanTau",'h_reg_'+reg+'_nUncleanTau_','Number of Taus (before cleaning)','-1','6','1','1'])
 #            makeplot([dirname+"reg_"+reg+"_ntaucleaned",'h_reg_'+reg+'_ntaucleaned_','Number of Taus (after Tau cleaning)','-1','4','5','1'])
@@ -1812,16 +1612,17 @@ for dirname in dirnames:
 #            makeplot([dirname+"reg_"+reg+"_nUncleanEle",'h_reg_'+reg+'_nUncleanEle_','Number of Eles (before cleaning)','-1','6','7','1'])
         makeplot([dirname+"reg_"+reg+"_nmu",'h_reg_'+reg+'_nmu_','Number of Muons','-1','5','1','1'])
 #            makeplot([dirname+"reg_"+reg+"_nUncleanMu",'h_reg_'+reg+'_nUncleanMu_','Number of Muons (before cleaning)','-1','6','7','1'])
-        makeplot([dirname+"reg_"+reg+"_lep1_pT",'h_reg_'+reg+'_lep1_pT_','Lead Lepton p_{T} (GeV)','0.','500.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_lep2_pT",'h_reg_'+reg+'_lep2_pT_','Second Lepton p_{T} (GeV)','0.','250.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_lep1_pT",'h_reg_'+reg+'_lep1_pT_','Lead Lepton p_{T} (GeV)','0.','500.','8','1'])
+        makeplot([dirname+"reg_"+reg+"_lep2_pT",'h_reg_'+reg+'_lep2_pT_','Second Lepton p_{T} (GeV)','0.','250.','8','1'])
         if reg.startswith('1mu1e'): makeplot([dirname+"reg_"+reg+"_e_pT",'h_reg_'+reg+'_e_pT_','Electron p_{T} (GeV)','0.','500.','1','1'])         #Top
         if reg.startswith('1mu1e'): makeplot([dirname+"reg_"+reg+"_mu_pT",'h_reg_'+reg+'_mu_pT_','Muon p_{T} (GeV)','0.','500.','1','1'])           #Top
         makeplot([dirname+"reg_"+reg+"_pho_pT",'h_reg_'+reg+'_pho_pT_','Photon p_{T} (GeV)','0.','500.','1','1'])
         if reg[1]=='m': makeplot([dirname+"reg_"+reg+"_lep1_iso",'h_reg_'+reg+'_lep1_iso_','Lead Lepton isolation','0.','800.','1','1'])
         if reg[1]=='m': makeplot([dirname+"reg_"+reg+"_lep2_iso",'h_reg_'+reg+'_lep2_iso_','Second Lepton isolation','0.','800.','1','1'])
         if reg.startswith('1mu1e'): makeplot([dirname+"reg_"+reg+"_mu_iso",'h_reg_'+reg+'_mu_iso_','Muon isolation','0.','800.','1','1'])            #Top
-        makeplot([dirname+"reg_"+reg+"_jet1_pT",'h_reg_'+reg+'_jet1_pT_','Lead Jet p_{T} (GeV)','0.','800.','1','1'])
-        makeplot([dirname+"reg_"+reg+"_jet2_pT",'h_reg_'+reg+'_jet2_pT_','Second Jet p_{T} (GeV)','0.','400.','1','1'])
+        makeplot([dirname+"reg_"+reg+"_jet1_pT",'h_reg_'+reg+'_jet1_pT_','Lead Jet p_{T} (GeV)','0.','800.','4','1'])
+        makeplot([dirname+"reg_"+reg+"_jet2_pT",'h_reg_'+reg+'_jet2_pT_','Second Jet p_{T} (GeV)','0.','400.','4','1'])
 #            makeplot([dirname+"reg_"+reg+"_lep1_dR_tau",'h_reg_'+reg+'_lep1_dR_tau_','dR b/w tau and lead lepton','0.','6.','120','1'])
 #            makeplot([dirname+"reg_"+reg+"_lep2_dR_tau",'h_reg_'+reg+'_lep2_dR_tau_','dR b/w tau and second lepton','0.','6.','120','1'])
 #            makeplot([dirname+"reg_"+reg+"_min_lep_dR_tau",'h_reg_'+reg+'_min_lep_dR_tau_','minimum dR b/w tau and leptons','0.','6.','120','1'])
+ 
