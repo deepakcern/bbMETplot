@@ -230,7 +230,7 @@ legend_sig_mass->AddEntry(h_sig3,"M_{a}=500 GeV","l");
 
 
 TString dirpathname;
- TString DirPreName = "/afs/cern.ch/work/d/dekumar/public/monoH/bbDMplots/CMSSW_8_0_26_patch1/src/WCRsplitter_withMT/bbMETplot/Scripts/test/";
+ TString DirPreName = "/afs/cern.ch/work/d/dekumar/public/monoH/newPlotting/CMSSW_8_0_26_patch1/src/bbMETplot/Scripts/test/";
  dirpathname = "'''+datestr+'''"; //.Form("%d%1.2d%d",ltm->tm_mday,1 + ltm->tm_mon,1900 + ltm->tm_year);
 
  system("mkdir -p  " + DirPreName+dirpathname +"/bbMETROOT");
@@ -297,8 +297,9 @@ TH1F*  ZJets;
 TH1F*  STop;
 TH1F*  GJets;
 TH1F*  QCD;
+TH1F*  SMH;
 //TH1F*  data_obs;
-TString filenamepath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_with_1GeV/bkg_data/");
+TString filenamepath("/afs/cern.ch/work/d/dekumar/public/monoH/new_BROutputs/monoH_bkg_SMH/bkg_data/");
 
 // Diboson WW WZ ZZ 0 1 2
 filenameString.push_back(filenamepath + "Output_crab_WW_TuneCUETP8M1_13TeV-pythia8_MC25ns_LegacyMC_20170328.root");
@@ -366,9 +367,17 @@ filenameString.push_back(filenamepath + "Output_crab_QCD_HT1500to2000_TuneCUETP8
 filenameString.push_back(filenamepath + "Output_crab_QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8.root");
 //
 
+//SM Higgs 46,47,48,49,50,51
+filenameString.push_back(filenamepath + "Output_crab_ggZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8.root");
+filenameString.push_back(filenamepath + "Output_crab_ggZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8.root");
+filenameString.push_back(filenamepath + "Output_crab_WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8.root");
+filenameString.push_back(filenamepath + "Output_crab_WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8.root");
+filenameString.push_back(filenamepath + "Output_crab_ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8.root");
+filenameString.push_back(filenamepath + "Output_crab_ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8.root");
+
 // not used so far
-TString filenamesigpath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_with_1GeV/signal/");
-//bbMET Signal Sample 46 - 83
+TString filenamesigpath("/afs/cern.ch/work/d/dekumar/public/monoH/new_BROutputs/monoH_bkg_SMH/signal/");
+//bbMET Signal Sample 52 - 89
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-400.root");
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-350.root");
 filenameString.push_back(filenamesigpath + "Output_scalar_NLO_Mchi-50_Mphi-300.root");
@@ -410,8 +419,8 @@ filenameString.push_back(filenamesigpath + "Output_pseudo_NLO_Mchi-100_Mphi-350.
 
 //
 
-TString filenamedatapath("/afs/cern.ch/work/d/dekumar/public/monoH/BROutputs/monoH_with_1GeV/bkg_data/");
-//Data File 84
+TString filenamedatapath("/afs/cern.ch/work/d/dekumar/public/monoH/new_BROutputs/monoH_bkg_SMH/bkg_data/");
+//Data File 90
 filenameString.push_back(filenamedatapath + "data_combined_'''+dtset+'''.root");
 
 
@@ -490,6 +499,15 @@ Xsec[45] = 25.24 * QCDSF;                   // QCD_HT2000toInf
 
 //Xsec[38] = 93.46;                   // Dummy
 
+
+
+Xsec[46] = 0.04865;
+Xsec[47] = 0.08912;
+Xsec[48] = 0.100;
+Xsec[49] = 0.159;
+Xsec[50] = 0.04865;
+Xsec[51] = 0.08912;
+
 double metbins[4]={200,350,500,1000};
 TH1F* h_mc[nfiles] ;
 float normalization[nfiles];
@@ -500,7 +518,7 @@ TH1F *h_total;
 
 //cout << to_string(nfiles) << endl;
 
-for(int i =0; i<84; i++){
+for(int i =0; i<90; i++){
     if(VERBOSE) cout << "Reading file #" << to_string(i+1) << ": " << filenameString[i] << endl;
     fIn = new TFile(filenameString[i],"READ");
 
@@ -539,7 +557,7 @@ for(int i =0; i<84; i++){
  }
 
 
-fIn = new TFile(filenameString[84],"READ");
+fIn = new TFile(filenameString[90],"READ");
 //if(VARIABLEBINS){
 if (varbin && (histnameString.Index("hadrecoil") !=string::npos  || histnameString.Index("met") !=string::npos)){
 h_temp =(TH1F*) fIn->Get(histnameString);
@@ -587,6 +605,12 @@ QCD   = (TH1F*)h_mc[37]->Clone();
 for(int qcd = 38; qcd < 46; qcd++){
 QCD->Add(h_mc[qcd]);}
 
+
+SMH   = (TH1F*)h_mc[46]->Clone();
+for(int smh = 47; smh < 51; smh++){
+SMH->Add(h_mc[smh]);}
+
+
 float ZJetsCount    =   ZJets->Integral();
 float DYJetsCount   =   DYJets->Integral();
 float WJetsCount    =   WJets->Integral();
@@ -595,8 +619,9 @@ float GJetsCount    =   GJets->Integral();
 float TTCount       =   TT->Integral();
 float VVCount       =   DIBOSON->Integral();
 float QCDCount      =   QCD->Integral();
+float SMHCount      =   SMH->Integral();
 
-TString DYLegend, WLegend, GLegend, ZLegend, STLegend, TTLegend, VVLegend, QCDLegend;
+TString DYLegend, WLegend, GLegend, ZLegend, STLegend, TTLegend, VVLegend, QCDLegend , SMHLegend;
 
 //if (ISCUTFLOW) {
 if (1) {
@@ -608,6 +633,7 @@ if (1) {
     TTLegend    =   "Top";
     VVLegend    =   "VV";
     QCDLegend   =   "QCD Multijet";
+    SMHLegend   =   "SM H";
 } else {
     DYLegend    =   "Z(ll) + jets: "+std::to_string(int(DYJetsCount));
     WLegend     =   "W(l#nu) + jets: "+std::to_string(int(WJetsCount));
@@ -617,6 +643,7 @@ if (1) {
     TTLegend    =   "Top: "+std::to_string(int(TTCount));
     VVLegend    =   "VV: "+std::to_string(int(VVCount));
     QCDLegend   =   "QCD Multijet: "+std::to_string(int(QCDCount));
+    SMHLegend   =  "SM H: "+std::to_string(int(SMHCount));
 }
 
 //NORATIOPLOT=0;
@@ -638,7 +665,10 @@ float st_i = STop->Integral();
 float gj_i = GJets->Integral();
 float db_i = DIBOSON->Integral();
 float qc_i = QCD->Integral();
-float mcsum = zj_i+dyj_i+wj_i+tt_i+st_i+gj_i+db_i+qc_i;
+float smh_i = SMH->Integral();
+
+
+float mcsum = zj_i+dyj_i+wj_i+tt_i+st_i+gj_i+db_i+qc_i+smh_i;
 
 legend = new TLegend(0.60, 0.70, 0.94,0.94,NULL,"brNDC");
 legend->SetTextSize(0.020);
@@ -677,6 +707,7 @@ legend->SetTextSize(0.020);
  if (gj_i/mcsum > 0.) legend->AddEntry(GJets,GLegend,"f");
  if (db_i/mcsum > 0.) legend->AddEntry(DIBOSON,VVLegend,"f");
  if (qc_i/mcsum > 0.) legend->AddEntry(QCD,QCDLegend,"f");
+ if (smh_i/mcsum > 0.) legend->AddEntry(SMH,SMHLegend,"f");
 
 
 //============== CANVAS DECLARATION ===================
@@ -719,6 +750,12 @@ GJets->SetLineWidth(0);
 QCD->SetFillColor(kGray+1);
 //QCD->SetLineColor(1);
 QCD->SetLineWidth(0);
+
+
+SMH->SetFillColor(kRed-2);
+//QCD->SetLineColor(1);
+SMH->SetLineWidth(0);
+
 
 //hadd all the histos acc to their contributions
 
@@ -763,7 +800,7 @@ QCD->SetLineWidth(0);
 //}
 
 
-
+hs->Add(SMH,"hist");
 hs->Add(GJets,"hist");
 hs->Add(DIBOSON,"hist");
 hs->Add(QCD,"hist");
@@ -796,7 +833,7 @@ if (Stackhist->GetEntries()==0){
  h_err->Sumw2();
  h_err->Reset();
  //h_err->Add(h_mc[0]);
- for (int imc=1; imc<46; imc++) {
+ for (int imc=1; imc<51; imc++) {
     h_err->Add(h_mc[imc]);
  }
 
@@ -1218,6 +1255,7 @@ for(Int_t i = 0; i < h_err->GetNbinsX()+2; i++) {
    pow(0.25 * TT->GetBinContent(i), 2) +
    pow(0.20 * GJets->GetBinContent(i), 2) +
    pow(0.20 * QCD->GetBinContent(i), 2) +
+   pow(0.20 * SMH->GetBinContent(i), 2) +
    pow(0.25 * STop->GetBinContent(i), 2) +
    pow(0.20 * DIBOSON->GetBinContent(i), 2));
    double binerror = sqrt(binerror2);
@@ -1542,6 +1580,8 @@ GJets->SetNameTitle("GJets","GJets");
 GJets->Write();
 QCD->SetNameTitle("QCD","QCD");
 QCD->Write();
+SMH->SetNameTitle("SMH","SMH");
+QCD->Write();
 STop->SetNameTitle("STop","STop");
 STop->Write();
 TT->SetNameTitle("TT","TT");
@@ -1596,12 +1636,26 @@ def makeplot(inputs):
         line = line.replace("VERBOSE",str(int(verbose)))
 
         HistName=inputs[1]
-        if 'h_reg_' in HistName:
-            histolabel=HistName.split('_')[2]
-        elif '_sr1' in HistName:
+        #if 'h_reg_' in HistName:
+        #    histolabel=HistName.split('_')[2]
+        if '_sr1' in HistName:
             histolabel="SR1"
         elif '_sr2' in HistName:
-            histolabel="#splitline{monoHbb}{resolved}"
+            histolabel="#splitline{monoHbb}{boosted}"
+        elif '2mu2b' in HistName:
+            histolabel="Dimuon CR"
+        elif '2e2b' in HistName:
+            histolabel="Dielectron CR"
+        elif '1mu2bW' in HistName:
+            histolabel="W CR (#mu)"
+        elif '1e2bW' in HistName:
+            histolabel="W CR (e)"
+        elif '1mu2bT' in HistName:
+            histolabel="t#bar{t} CR (#mu)"
+        elif '1e2bT' in HistName:
+            histolabel="t#bar{t} CR (e)"
+        elif '1mu1e2b' in HistName:
+            histolabel="t#bar{t} CR (e+#mu)"
         else:
             histolabel=""
 
